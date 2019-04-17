@@ -114,8 +114,8 @@ public class PokerGUI extends JFrame{
         String[] numPlayers = {"2", "3", "4", "5", "6"};
         this.numOfPlayers = new JComboBox<>(numPlayers);
 
-        String[] cardNumbers = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-            "Jack", "Queen", "King", "Ace"};
+        String[] cardNumbers = {"Ace", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+            "Jack", "Queen", "King"};
         this.cardNumberBoxPlayer1A = new JComboBox<>(cardNumbers);
         this.cardNumberBoxPlayer1B = new JComboBox<>(cardNumbers);
         this.cardNumberBoxPlayer2A = new JComboBox<>(cardNumbers);
@@ -161,11 +161,9 @@ public class PokerGUI extends JFrame{
             this.history();
         });
         
-        
         String [] columnNames = {"Player", "Win Percentage"};
-        Object [] = 
-        this.handOutcome = new JTable("Outcome");
-        this.history = new JScrollPane(handOutcome);
+        Object [] [] evaluation = {{"something", "something"}, {"Something", "dark side"}};
+        this.handOutcome = new JTable(columnNames, evaluation);
      
     }
         
