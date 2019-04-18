@@ -1,2 +1,4 @@
-/Poker Calculator/nbproject/private/
-/Poker Calculator/build/
+nbproject/private/
+build/
+.idea/*
+target/
