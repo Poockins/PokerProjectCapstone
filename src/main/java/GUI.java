@@ -8,6 +8,9 @@
  *
  * @author keith
  */
+
+package main.java;
+
 public class GUI extends javax.swing.JDialog {
 
     /**
