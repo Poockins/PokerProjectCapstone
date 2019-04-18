@@ -27,6 +27,10 @@ Clone the repository locally first.
 * Write tests to cover any new code (and any old code that isn't covered). **Run the full test suite before opening a PR. Ensure that all merged tests pass -- the test suite in master should never fail.**
 * Check these [Git flight rules](https://github.com/k88hudson/git-flight-rules) if you need to untangle a git problem.
 
+## Documentation
+
+* In-code documentation should be written in a Javadoc-friendly style.
+
 ## Builds
 
 * Builds for distribution should be done using Maven.
