@@ -7,6 +7,7 @@
 /**
  * @author keith
  */
+package calculator;
 
 public class PokerHistoryFrame extends javax.swing.JFrame {
 

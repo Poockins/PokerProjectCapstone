@@ -8,6 +8,7 @@
  * @author keith
  */
 
+package calculator;
 
 public class GUI extends javax.swing.JDialog {
 

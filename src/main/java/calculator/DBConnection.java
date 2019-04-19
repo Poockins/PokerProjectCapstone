@@ -5,6 +5,8 @@
  * @version 1.0
  */
 
+package calculator;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -15,10 +17,11 @@ import java.sql.Statement;
 public class DBConnection {
 
   static final String DB_PATH = "data/poker";
-  Connection conn; // Persist database connection until explicitly shut down
+  public Connection conn; // Persist database connection until explicitly shut down
 
   /**
    * Constructor
+   * @throws Exception
    */
   public DBConnection() throws Exception {
     Class.forName("org.hsqldb.jdbcDriver");
@@ -53,6 +56,7 @@ public class DBConnection {
 
     Statement st = conn.createStatement();
     st.executeUpdate(query);
+    st.close();
   }
 
   /**
@@ -64,10 +68,11 @@ public class DBConnection {
   private void createPlayersTable() throws SQLException {
     String query = "CREATE TABLE IF NOT EXISTS players (" +
         "id INT IDENTITY PRIMARY KEY, " +
-        "name VARCHAR(256) )";
+        "name VARCHAR(256));";
 
     Statement st = conn.createStatement();
     st.executeUpdate(query);
+    st.close();
   }
 
   /**
@@ -83,9 +88,10 @@ public class DBConnection {
         "player_id INT, " +
         "game_id INT, " +
         "FOREIGN KEY(player_id) REFERENCES players, " +
-        "FOREIGN KEY(game_id) REFERENCES games)";
+        "FOREIGN KEY(game_id) REFERENCES games);";
 
     Statement st = conn.createStatement();
     st.executeUpdate(query);
+    st.close();
   }
 }

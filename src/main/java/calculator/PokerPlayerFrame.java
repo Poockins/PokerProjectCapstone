@@ -8,6 +8,8 @@
  * @author keith
  */
 
+package calculator;
+
 public class PokerPlayerFrame extends javax.swing.JDialog {
 
   /**
