@@ -5,7 +5,7 @@ Poker probability calculator for UMUC capstone
 
 * HSQLDB
 * JUnit (with EasyMock)
-
+* Checkstyle
 
 ## Development process
 
@@ -33,4 +33,4 @@ Clone the repository locally first.
 
 ## Builds
 
-* Builds for distribution should be done using Maven.
+* Builds should be done through Maven.
