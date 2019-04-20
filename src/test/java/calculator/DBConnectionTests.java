@@ -39,4 +39,9 @@ class DBConnectionTests {
       ex.printStackTrace();
     }
   }
+
+  @Test
+  void emptyTest() {
+    
+  }
 }
