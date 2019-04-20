@@ -9,6 +9,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+package calculator;
+
 public class Cards implements Comparable<Cards> {
 
     private final Rank rank;
@@ -62,5 +64,5 @@ public class Cards implements Comparable<Cards> {
         return rankCompar != 0 ? rankCompar : Integer.compare(this.suit.getSuitValue(), val.suit.getSuitValue());
     }
 
-    
+
 }

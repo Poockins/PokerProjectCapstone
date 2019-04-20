@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 
+package calculator;
 
 public enum Suit {
     DIAMONDS(1),
