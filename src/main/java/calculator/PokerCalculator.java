@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 
+
 import java.util.Collections;
 import java.util.ListIterator;
 
@@ -7,11 +8,10 @@ import javax.swing.text.html.HTMLDocument.Iterator;
 
 /**
  * This class will produce the probability based off the
- * users input. Poker Calculator.
+ * users input which is his own hand and it will also evaluate the users hand as well.
  * @author Thomas
  *
  */
-
 package calculator;
 
 public class PokerCalculator {
@@ -26,7 +26,9 @@ public class PokerCalculator {
 	private String probabilityStr;
 
 
-	//The constructor
+	/**
+	 * The Constructor of the poker Calculator class
+	 */
 	public PokerCalculator()
 	{
 		handValue = 0;//User will only have two hands
@@ -34,6 +36,10 @@ public class PokerCalculator {
 
 	}
 
+	/**
+	* adds cards to the user arraylist
+	 * @param card
+	 */
 	public void addUserCard(Cards card)
 	{
 		//adding one of the two cards to the userhand list.
@@ -42,15 +48,19 @@ public class PokerCalculator {
 	}
 
 	/**
-	 *
+	 * adds community cards to the cards list
 	 * @param card
 	 */
 	public void addCommunityCard(Cards card)
 	{
 		communityCards.add(card);
 	}
-	//This method will evaluate the users hand to see if it has a good hand
-	//such as a flush, high card, pair, three of kind,
+
+	/**
+	 * This method will evaluate the users hand and assigns a value to the user which depends on how strong the
+	 * users hand. For instance the highest value will be assigned to the user if it has a royal flush and the lowest will
+	 * be if it only has a high card.
+	 */
 	public void evaluateCards()
 	{
 		//High Card
@@ -189,7 +199,7 @@ public class PokerCalculator {
 
 	/**
 	 * Checks to see if it has a straight, but with all the same suits.
-	 * @return
+	 * @return boolean value
 	 */
 	public boolean hasStraightFlush()
 	{
@@ -203,6 +213,10 @@ public class PokerCalculator {
 
 	}
 
+	/**
+	 * Checks to see if the user has a full house.
+	 * @return boolean value
+	 */
 	public boolean hasfullHouse()
 	{
 		if(hasThreeOfKind() && hasPair())
@@ -214,7 +228,7 @@ public class PokerCalculator {
 
 	/**
 	 * Checks to see if you have a pair.
-	 * @return
+	 * @return boolean value
 	 */
 	public boolean hasTwoPairs()
 	{
@@ -260,7 +274,7 @@ public class PokerCalculator {
 
 	/**
 	 * It checks to see if the user has a straight. Basically card or cards
-	 * @return
+	 * @return boolean value
 	 */
 	public boolean hasStraight()
 	{
@@ -315,6 +329,7 @@ public class PokerCalculator {
 	}
 	/**
 	 * Checks to see if it has four of a kind in the texas holden game.
+	 * @param boolean value
 	 */
 	public boolean HasFourOfKind()
 	{
@@ -372,7 +387,7 @@ public class PokerCalculator {
 
 	/**
 	 * Checks to see if it has three of a kind.
-	 * @return
+	 * @return boolean value
 	 */
 	public boolean hasThreeOfKind()
 	{
@@ -426,7 +441,7 @@ public class PokerCalculator {
 
 	/**
 	 * checks to see if there are five cards with the same suit
-	 * @return
+	 * @return boolean value
 	 */
 	public boolean hasFlush()
 	{
@@ -491,7 +506,7 @@ public class PokerCalculator {
 
 	/**
 	 * Checks to see if it has a royal flush
-	 * @return
+	 * @return boolean value
 	 */
 	public boolean hasRoyalFlush()
 	{
@@ -551,8 +566,11 @@ public class PokerCalculator {
 				return false;
 	}
 
-	//This will produce the probability of winning.
-	public void produceProbability()
+	/**
+	 * This methods will produce a string that will be assigned to the probilityStr. The string will
+	 * be the evaluation result which is pair to royal flush.
+	 */
+	public void produceEvaluation()
 	{
 
 		//High Card
@@ -571,35 +589,35 @@ public class PokerCalculator {
 
 			 break;
 		 case 1://high card
-			 probabilityStr = "Win: 3.0%";
+			 probabilityStr = "high card";
 			 break;
 		 case 2:// one pair
-
+			 probabilityStr = "one pair";
 			 break;
 
 		 case 3://two pairs
-
+			 probabilityStr = "two pairs";
 			 break;
 		 case 4://three of a kind
-
+			 probabilityStr = "three of a kind";
 			 break;
 		 case 5://straight (1 2 3 4 5)
-
+			 probabilityStr = "Straight";
 			 break;
 		 case 6: //flush
-
+			 probabilityStr = "Flush";
 			 break;
 		 case 7://full house
-
+			 probabilityStr = "Full house";
 			 break;
 		 case 8://four of a kind
-
+			 probabilityStr = "Four of a kind";
 			 break;
 		 case 9://straight flush
-
+			 probabilityStr = "Straight Flush";
 			 break;
 		 case 10:// royal flush
-			 probabilityStr = "Win: 99.00% ";
+			 probabilityStr = "Royal Flush ";
 			 break;
 
 
