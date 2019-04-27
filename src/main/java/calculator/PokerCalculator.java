@@ -1,7 +1,10 @@
 import java.util.ArrayList;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+>>>>>>> parent of 2137be9... Hand Evaluation and JUnit Test Cases
 import java.util.Collections;
 import java.util.ListIterator;
 
@@ -11,10 +14,12 @@ import javax.swing.text.html.HTMLDocument.Iterator;
 >>>>>>> parent of 1b15db6... Update PokerCalculator.java
 /**
  * This class will produce the probability based off the
- * users input which is his own hand and it will also evaluate the users hand as well.
+ * users input. Poker Calculator.
  * @author Thomas
  *
- */
+
+ //eval
+
 package calculator;
 
 public class PokerCalculator {
@@ -29,9 +34,7 @@ public class PokerCalculator {
 	private String probabilityStr;
 
 
-	/**
-	 * The Constructor of the poker Calculator class
-	 */
+	//The constructor
 	public PokerCalculator()
 	{
 		handValue = 0;//User will only have two hands
@@ -40,10 +43,13 @@ public class PokerCalculator {
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	/**
 	* adds cards to the user arraylist
 	 * @param card
 	 */
+=======
+>>>>>>> parent of 2137be9... Hand Evaluation and JUnit Test Cases
 	public void addUserCard(Cards card)
 =======
 	public void setUserHand(Cards card1, Cards card2)
@@ -56,7 +62,7 @@ public class PokerCalculator {
 
 <<<<<<< HEAD
 	/**
-	 * adds community cards to the cards list
+	 *
 	 * @param card
 	 */
 	public void addCommunityCard(Cards card)
@@ -66,12 +72,8 @@ public class PokerCalculator {
 	{
 
 	}
-
-	/**
-	 * This method will evaluate the users hand and assigns a value to the user which depends on how strong the
-	 * users hand. For instance the highest value will be assigned to the user if it has a royal flush and the lowest will
-	 * be if it only has a high card.
-	 */
+	//This method will evaluate the users hand to see if it has a good hand
+	//such as a flush, high card, pair, three of kind,
 	public void evaluateCards()
 	{
 		//High Card
@@ -165,7 +167,7 @@ public class PokerCalculator {
 	/**
 <<<<<<< HEAD
 	 * Checks to see if it has a straight, but with all the same suits.
-	 * @return boolean value
+	 * @return
 	 */
 	public boolean hasStraightFlush()
 	{
@@ -179,10 +181,6 @@ public class PokerCalculator {
 
 	}
 
-	/**
-	 * Checks to see if the user has a full house.
-	 * @return boolean value
-	 */
 	public boolean hasfullHouse()
 	{
 		if(hasThreeOfKind() && hasPair())
@@ -196,7 +194,7 @@ public class PokerCalculator {
 =======
 >>>>>>> parent of 1b15db6... Update PokerCalculator.java
 	 * Checks to see if you have a pair.
-	 * @return boolean value
+	 * @return
 	 */
 	public boolean hasTwoPairs()
 	{
@@ -243,7 +241,7 @@ public class PokerCalculator {
 	/**
 <<<<<<< HEAD
 	 * It checks to see if the user has a straight. Basically card or cards
-	 * @return boolean value
+	 * @return
 	 */
 	public boolean hasStraight()
 	{
@@ -298,7 +296,6 @@ public class PokerCalculator {
 	}
 	/**
 	 * Checks to see if it has four of a kind in the texas holden game.
-	 * @param boolean value
 	 */
 	public boolean HasFourOfKind()
 	{
@@ -358,7 +355,7 @@ public class PokerCalculator {
 =======
 >>>>>>> parent of 1b15db6... Update PokerCalculator.java
 	 * Checks to see if it has three of a kind.
-	 * @return boolean value
+	 * @return
 	 */
 	public boolean hasThreeOfKind()
 	{
@@ -413,7 +410,7 @@ public class PokerCalculator {
 
 	/**
 	 * checks to see if there are five cards with the same suit
-	 * @return boolean value
+	 * @return
 	 */
 	public boolean hasFlush()
 	{
@@ -481,18 +478,15 @@ public class PokerCalculator {
 
 	/**
 	 * Checks to see if it has a royal flush
-	 * @return boolean value
+	 * @return
 	 */
 	public boolean hasRoyalFlush()
 	{
 		return true;
 	}
 
-	/**
-	 * This methods will produce a string that will be assigned to the probilityStr. The string will
-	 * be the evaluation result which is pair to royal flush.
-	 */
-	public void produceEvaluation()
+	//This will produce the probability of winning.
+	public void produceProbability()
 	{
 		if(handValue == 10)
 		{
@@ -501,35 +495,35 @@ public class PokerCalculator {
 
 			 break;
 		 case 1://high card
-			 probabilityStr = "high card";
+			 probabilityStr = "Win: 3.0%";
 			 break;
 		 case 2:// one pair
-			 probabilityStr = "one pair";
+
 			 break;
 
 		 case 3://two pairs
-			 probabilityStr = "two pairs";
+
 			 break;
 		 case 4://three of a kind
-			 probabilityStr = "three of a kind";
+
 			 break;
 		 case 5://straight (1 2 3 4 5)
-			 probabilityStr = "Straight";
+
 			 break;
 		 case 6: //flush
-			 probabilityStr = "Flush";
+
 			 break;
 		 case 7://full house
-			 probabilityStr = "Full house";
+
 			 break;
 		 case 8://four of a kind
-			 probabilityStr = "Four of a kind";
+
 			 break;
 		 case 9://straight flush
-			 probabilityStr = "Straight Flush";
+
 			 break;
 		 case 10:// royal flush
-			 probabilityStr = "Royal Flush ";
+			 probabilityStr = "Win: 99.00% ";
 			 break;
 
 =======
