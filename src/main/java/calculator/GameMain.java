@@ -17,7 +17,9 @@ public class GameMain extends JFrame {
     Player p1;
     Player p2;
     Player board;
+    
 
+    String directory = "C:\\Users\\rob\\Desktop\\NetBeansProjects\\Poker2\\";
     static ArrayList<String> handResults1 = new ArrayList<>();
     static ArrayList<String> handResults2 = new ArrayList<>();
 
@@ -48,10 +50,6 @@ public class GameMain extends JFrame {
         exit.addActionListener((ActionEvent e) -> {
             System.exit(0);
         });
-        ImageIcon imageIcon = new ImageIcon("C:\\Users\\rob\\Desktop\\NetBeansProjects\\Poker2\\AceSpades.jpg"); // load the image to a imageIcon
-        Image image = imageIcon.getImage(); // transform it 
-        Image newimg = image.getScaledInstance(60, 80, java.awt.Image.SCALE_SMOOTH); // scale it the smooth way  
-        imageIcon = new ImageIcon(newimg);
 
         JLabel p1Card1 = new JLabel();
 
@@ -139,13 +137,13 @@ public class GameMain extends JFrame {
                 p2.addCard(deck.getDeckCards());
 
                 //Display card images to the cards each player is dealt
-                ImageIcon im = new ImageIcon(new ImageIcon("C:\\Users\\rob\\Desktop\\NetBeansProjects\\Poker2\\" + p1.getCards().get(0) + ".jpg").getImage().getScaledInstance(60, 80, Image.SCALE_DEFAULT));
+                ImageIcon im = new ImageIcon(new ImageIcon(directory + p1.getCards().get(0) + ".jpg").getImage().getScaledInstance(60, 80, Image.SCALE_DEFAULT));
                 p1Card1.setIcon(im);
-                ImageIcon im2 = new ImageIcon(new ImageIcon("C:\\Users\\rob\\Desktop\\NetBeansProjects\\Poker2\\" + p1.getCards().get(1) + ".jpg").getImage().getScaledInstance(60, 80, Image.SCALE_DEFAULT));
+                ImageIcon im2 = new ImageIcon(new ImageIcon(directory + p1.getCards().get(1) + ".jpg").getImage().getScaledInstance(60, 80, Image.SCALE_DEFAULT));
                 p1Card2.setIcon(im2);
-                im2 = new ImageIcon(new ImageIcon("C:\\Users\\rob\\Desktop\\NetBeansProjects\\Poker2\\" + p2.getCards().get(0) + ".jpg").getImage().getScaledInstance(60, 80, Image.SCALE_DEFAULT));
+                im2 = new ImageIcon(new ImageIcon(directory + p2.getCards().get(0) + ".jpg").getImage().getScaledInstance(60, 80, Image.SCALE_DEFAULT));
                 p2Card1.setIcon(im2);
-                im2 = new ImageIcon(new ImageIcon("C:\\Users\\rob\\Desktop\\NetBeansProjects\\Poker2\\" + p2.getCards().get(1) + ".jpg").getImage().getScaledInstance(60, 80, Image.SCALE_DEFAULT));
+                im2 = new ImageIcon(new ImageIcon(directory + p2.getCards().get(1) + ".jpg").getImage().getScaledInstance(60, 80, Image.SCALE_DEFAULT));
                 p2Card2.setIcon(im2);
 
                 //Burn card
@@ -169,15 +167,15 @@ public class GameMain extends JFrame {
                 board.addCard(deck.getDeckCards());
 
                 //Display card images of the cards dealt on the flop, turn, and river
-                ImageIcon boardImg1 = new ImageIcon(new ImageIcon("C:\\Users\\rob\\Desktop\\NetBeansProjects\\Poker2\\" + board.getCards().get(0) + ".jpg").getImage().getScaledInstance(60, 80, Image.SCALE_DEFAULT));
+                ImageIcon boardImg1 = new ImageIcon(new ImageIcon(directory + board.getCards().get(0) + ".jpg").getImage().getScaledInstance(60, 80, Image.SCALE_DEFAULT));
                 board1.setIcon(boardImg1);
-                boardImg1 = new ImageIcon(new ImageIcon("C:\\Users\\rob\\Desktop\\NetBeansProjects\\Poker2\\" + board.getCards().get(1) + ".jpg").getImage().getScaledInstance(60, 80, Image.SCALE_DEFAULT));
+                boardImg1 = new ImageIcon(new ImageIcon(directory + board.getCards().get(1) + ".jpg").getImage().getScaledInstance(60, 80, Image.SCALE_DEFAULT));
                 board2.setIcon(boardImg1);
-                boardImg1 = new ImageIcon(new ImageIcon("C:\\Users\\rob\\Desktop\\NetBeansProjects\\Poker2\\" + board.getCards().get(2) + ".jpg").getImage().getScaledInstance(60, 80, Image.SCALE_DEFAULT));
+                boardImg1 = new ImageIcon(new ImageIcon(directory + board.getCards().get(2) + ".jpg").getImage().getScaledInstance(60, 80, Image.SCALE_DEFAULT));
                 board3.setIcon(boardImg1);
-                boardImg1 = new ImageIcon(new ImageIcon("C:\\Users\\rob\\Desktop\\NetBeansProjects\\Poker2\\" + board.getCards().get(3) + ".jpg").getImage().getScaledInstance(60, 80, Image.SCALE_DEFAULT));
+                boardImg1 = new ImageIcon(new ImageIcon(directory + board.getCards().get(3) + ".jpg").getImage().getScaledInstance(60, 80, Image.SCALE_DEFAULT));
                 board4.setIcon(boardImg1);
-                boardImg1 = new ImageIcon(new ImageIcon("C:\\Users\\rob\\Desktop\\NetBeansProjects\\Poker2\\" + board.getCards().get(4) + ".jpg").getImage().getScaledInstance(60, 80, Image.SCALE_DEFAULT));
+                boardImg1 = new ImageIcon(new ImageIcon(directory + board.getCards().get(4) + ".jpg").getImage().getScaledInstance(60, 80, Image.SCALE_DEFAULT));
                 board5.setIcon(boardImg1);
 
                 /**
