@@ -32,13 +32,16 @@ public class PokerPanel extends JPanel{
     String [] suitValue = {"Hearts","Clubs","Diamonds","Spades"};
     JPanel pokerTable = new JPanel();
     JPanel historyPanel = new PokerHistory();
+    
     PlayerPanelFactory playerFactory = new PlayerPanelFactory();
     Border blackline = BorderFactory.createLineBorder(Color.black);
+    
     public PokerPanel(){
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         pokerTable.setLayout(new GridBagLayout());
         pokerTable.setBorder(blackline);
+    //    Container contentPane = this.getTopLevelAncestor();
         GridBagConstraints tableConstraints = new GridBagConstraints();
         //Poker Table Components
         //Flop Card1
@@ -164,6 +167,10 @@ public class PokerPanel extends JPanel{
         JPanel calcPanel = new JPanel();
         calcPanel.setBorder(blackline);
         JTable calcTable = new JTable(dataRow, columnNames);  
+        int tableWidth = calcPanel.getWidth();
+        int tableHeight = calcPanel.getHeight();
+        calcTable.setPreferredScrollableViewportSize(calcTable.getPreferredSize());
+        calcTable.setSize(tableWidth, tableHeight);
         calcPanel.setBounds(0, 0, 50, 50);
         JScrollPane sp = new JScrollPane(calcTable);    
         
@@ -227,8 +234,8 @@ public class PokerPanel extends JPanel{
         add(player7,c);
         c.gridx=4;
         add(player8,c);
-        c.gridx=6;
-        c.gridy=2;
+        c.gridx=3;
+        c.gridy=4;
         add(miscPanel,c);
         
         //Button Controls
@@ -237,19 +244,22 @@ public class PokerPanel extends JPanel{
         addPlayer1.addActionListener((ActionEvent e) -> {
             player1.removeAll();
             player1.add(playerFactory.PlayerPanelFactory("Player1"));
+            //welcomeScreen.get
             repaint();
             validate();
         });
         addPlayer2.addActionListener((ActionEvent e) -> {
             player2.removeAll();
             player2.add(playerFactory.PlayerPanelFactory("Player2"));
-            repaint();
+            getParent().repaint();
+     //       contentPane.repaint();
             validate();
         });
         addPlayer3.addActionListener((ActionEvent e) -> {
             player3.removeAll();
             player3.add(playerFactory.PlayerPanelFactory("Player3"));
-            repaint();
+            getParent().repaint();
+    //        contentPane.repaint();
             validate();
         });
         addPlayer4.addActionListener((ActionEvent e) -> {
