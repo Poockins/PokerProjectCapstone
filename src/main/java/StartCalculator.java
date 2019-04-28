@@ -13,8 +13,9 @@ public class StartCalculator {
   public static void main(String[] args) {
     try {
       DBConnection db = new DBConnection();
-      db.setup();
-      db.conn.close();
+      //db.setup();
+      //db.conn.close();
+      WelcomeScreen gui = new WelcomeScreen();
     } catch (Exception ex) {
       ex.printStackTrace(); // TODO: Improve error handling
     }
