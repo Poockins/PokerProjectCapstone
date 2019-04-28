@@ -1,4 +1,5 @@
 package calculator;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ListIterator;
@@ -11,7 +12,6 @@ import javax.swing.text.html.HTMLDocument.Iterator;
  * @author Thomas
  *
  */
-
 
 public class PokerCalculator {
   // THe value of the hand.

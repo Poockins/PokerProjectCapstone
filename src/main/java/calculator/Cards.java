@@ -1,15 +1,18 @@
+package calculator;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 
+package calculator;
 
+import calculator.Rank;
+import calculator.Suit;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-package calculator;
 
 public class Cards implements Comparable<Cards> {
 
