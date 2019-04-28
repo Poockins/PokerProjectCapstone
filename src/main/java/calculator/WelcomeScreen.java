@@ -5,9 +5,9 @@
  */
 package calculator;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -21,7 +21,6 @@ import javax.swing.JPanel;
 public class WelcomeScreen extends JFrame{
     JPanel mainPanel = new JPanel();
     JPanel welcomePanel = new JPanel();
-    
     JPanel pokerCalPanel = new PokerPanel();
     JPanel historyPanel = new PokerHistory();
     
@@ -29,25 +28,39 @@ public class WelcomeScreen extends JFrame{
         setTitle("Poker Calculator");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setSize(1000,400);
+        setSize(1300,450);
         setVisible(true);
         
-        
-        JLabel welcomeLabel = new JLabel("Poker Calculator");
+        JLabel createdBy = new JLabel("Created by:");
+        createdBy.setFont(new Font("Sans-Serif", Font.PLAIN, 18));
+        JLabel authorsNames = new JLabel("Vanessa Redman   " + "Robert Edwards   " + "Thomas Corea   " +
+                "Yuko Takegoshi   " + "Keith DeMoura   " + "Eli Cheek");
+        authorsNames.setFont(new Font("Sans-Serif", Font.PLAIN, 18));
+        JLabel welcomeLabel = new JLabel("Welcome to the Poker Odds Calculator!");
+        welcomeLabel.setFont(new Font("Sans-Serif", Font.PLAIN, 32));
         JButton calculatorButton = new JButton("Go to Poker Calculator");
         JButton databaseButton = new JButton("Go to Poker Database");
-        
-        welcomePanel.add(welcomeLabel);
+
         mainPanel.add(welcomePanel);
+        welcomePanel.add(welcomeLabel);
+        welcomePanel.setLayout(new BoxLayout(welcomePanel, BoxLayout.Y_AXIS));
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.add(Box.createVerticalStrut(100));
+        //mainPanel.add(Box.createHorizontalStrut(100));
         mainPanel.add(calculatorButton);
+        mainPanel.add(Box.createVerticalStrut(40));
         mainPanel.add(databaseButton);
+        mainPanel.add(Box.createVerticalStrut(100));
+        mainPanel.add(createdBy);
+        mainPanel.add(authorsNames);
         add(mainPanel);
         //add(pokerCalPanel);
         calculatorButton.addActionListener((ActionEvent e) -> {
             //removeAll();
             mainPanel.remove(databaseButton);
             mainPanel.remove(calculatorButton);
+            mainPanel.remove(createdBy);
+            mainPanel.remove(authorsNames);
             welcomePanel.removeAll();
             welcomePanel.add(pokerCalPanel);
             //mainPanel.remove(welcomePanel);
@@ -62,6 +75,8 @@ public class WelcomeScreen extends JFrame{
         databaseButton.addActionListener((ActionEvent e) -> {
             mainPanel.remove(databaseButton);
             mainPanel.remove(calculatorButton);
+            mainPanel.remove(createdBy);
+            mainPanel.remove(authorsNames);
             welcomePanel.removeAll();
             welcomePanel.add(historyPanel);
             //mainPanel.remove(welcomePanel);

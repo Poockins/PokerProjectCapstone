@@ -9,7 +9,6 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -106,6 +105,7 @@ public class PokerPanel extends JPanel{
         player1.setBorder(player1Title);
         JButton addPlayer1 = new JButton("Add");
         player1.add(addPlayer1);
+        repaint();
 
         JPanel player2 = new JPanel();
         TitledBorder player2Title = BorderFactory.createTitledBorder(blackline, "Player2");
@@ -113,6 +113,7 @@ public class PokerPanel extends JPanel{
         player2.setBorder(player2Title);
         JButton addPlayer2 = new JButton("Add");
         player2.add(addPlayer2);
+        repaint();
 
         JPanel player3 = new JPanel();
         TitledBorder player3Title = BorderFactory.createTitledBorder(blackline, "Player3");
@@ -120,6 +121,7 @@ public class PokerPanel extends JPanel{
         player3.setBorder(player3Title);
         JButton addPlayer3 = new JButton("Add");
         player3.add(addPlayer3);
+        repaint();
         
         JPanel player4 = new JPanel();
         TitledBorder player4Title = BorderFactory.createTitledBorder(blackline, "Player4");
@@ -127,6 +129,7 @@ public class PokerPanel extends JPanel{
         player4.setBorder(player4Title);
         JButton addPlayer4 = new JButton("Add");
         player4.add(addPlayer4);
+        repaint();
 
         JPanel player5 = new JPanel();
         TitledBorder player5Title = BorderFactory.createTitledBorder(blackline, "Player5");
@@ -134,6 +137,7 @@ public class PokerPanel extends JPanel{
         player5.setBorder(player5Title);
         JButton addPlayer5 = new JButton("Add");
         player5.add(addPlayer5);
+        repaint();
 
         JPanel player6 = new JPanel();
         TitledBorder player6Title = BorderFactory.createTitledBorder(blackline, "Player6");
@@ -141,6 +145,7 @@ public class PokerPanel extends JPanel{
         player6.setBorder(player6Title);
         JButton addPlayer6 = new JButton("Add");
         player6.add(addPlayer6);
+        repaint();
 
         JPanel player7 = new JPanel();
         TitledBorder player7Title = BorderFactory.createTitledBorder(blackline, "Player7");
@@ -148,6 +153,7 @@ public class PokerPanel extends JPanel{
         player7.setBorder(player7Title);
         JButton addPlayer7 = new JButton("Add");
         player7.add(addPlayer7);
+        repaint();
         
         JPanel player8 = new JPanel();
         TitledBorder player8Title = BorderFactory.createTitledBorder(blackline, "Player8");
@@ -155,6 +161,7 @@ public class PokerPanel extends JPanel{
         player8.setBorder(player8Title);
         JButton addPlayer8 = new JButton("Add");
         player8.add(addPlayer8);
+        repaint();
         
         
         //Calculation Panel
@@ -165,7 +172,7 @@ public class PokerPanel extends JPanel{
         calcPanel.setBorder(blackline);
         JTable calcTable = new JTable(dataRow, columnNames);  
         calcPanel.setBounds(0, 0, 50, 50);
-        JScrollPane sp = new JScrollPane(calcTable);    
+        JScrollPane sp = new JScrollPane(calcTable);
         
         calcPanel.add(sp);    
         
@@ -173,7 +180,7 @@ public class PokerPanel extends JPanel{
         //Number of Player Panel
         JPanel numPlayerPanel = new JPanel();
         numPlayerPanel.setBorder(blackline);
-        String [] numPlayerList = {"1","2","3","4","5","6","7","8"};
+        String [] numPlayerList = {"2","3","4","5","6","7","8"};
         JLabel playerLabel = new JLabel("Number of Players");
         JComboBox playerBox = new JComboBox(numPlayerList);
         numPlayerPanel.add(playerLabel);
