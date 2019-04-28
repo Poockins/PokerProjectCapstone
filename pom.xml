@@ -6,7 +6,7 @@
 
   <groupId>cmsc495</groupId>
   <artifactId>poker-calculator</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0-P2-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>Poker Calculator</name>
 
