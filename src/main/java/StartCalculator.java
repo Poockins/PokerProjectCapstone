@@ -7,6 +7,7 @@ import calculator.DBConnection;
  */
 
 import calculator.*;
+import javax.swing.JFrame;
 
 public class StartCalculator {
 
@@ -19,5 +20,10 @@ public class StartCalculator {
     } catch (Exception ex) {
       ex.printStackTrace(); // TODO: Improve error handling
     }
+    
+    WelcomeScreen newGame = new WelcomeScreen();
+    newGame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    newGame.setLocation(300,300);
+    newGame.setVisible(true);
   }
 }

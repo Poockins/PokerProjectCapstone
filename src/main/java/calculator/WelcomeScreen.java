@@ -9,7 +9,9 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -26,7 +28,6 @@ public class WelcomeScreen extends JFrame{
     JPanel welcomePanel = new JPanel();
     JPanel controlPanel = new JPanel();
     Container contentPane = this.getContentPane();
-    
     JPanel pokerCalPanel = new PokerPanel();
     JPanel historyPanel = new PokerHistory();
     
@@ -34,23 +35,35 @@ public class WelcomeScreen extends JFrame{
         setTitle("Poker Calculator");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setSize(1000,400);
+        setSize(1300,450);
         setVisible(true);
         SpringLayout layout = new SpringLayout();
         setLayout(layout);
         
-        
-        JLabel welcomeLabel = new JLabel("Poker Calculator");
+        JLabel createdBy = new JLabel("Created by:");
+        createdBy.setFont(new Font("Sans-Serif", Font.PLAIN, 18));
+        JLabel authorsNames = new JLabel("Vanessa Redman   " + "Robert Edwards   " + "Thomas Corea   " +
+                "Yuko Takegoshi   " + "Keith DeMoura   " + "Eli Cheek");
+        authorsNames.setFont(new Font("Sans-Serif", Font.PLAIN, 18));
+        JLabel welcomeLabel = new JLabel("Welcome to the Poker Odds Calculator!");
+        welcomeLabel.setFont(new Font("Sans-Serif", Font.PLAIN, 32));
         JButton calculatorButton = new JButton("Go to Poker Calculator");
         JButton databaseButton = new JButton("Go to Poker Database");
-        
-        welcomePanel.add(welcomeLabel);
+
         mainPanel.add(welcomePanel);
         mainPanel.setPreferredSize(new Dimension(contentPane.getWidth()-controlPanel.getWidth(),contentPane.getHeight()));
         controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
         controlPanel.setPreferredSize(new Dimension(175,contentPane.getHeight()));
         controlPanel.add(calculatorButton);
         controlPanel.add(databaseButton);
+        welcomePanel.add(welcomeLabel);
+        welcomePanel.setLayout(new BoxLayout(welcomePanel, BoxLayout.Y_AXIS));
+        welcomePanel.add(Box.createVerticalStrut(100));
+        //mainPanel.add(Box.createHorizontalStrut(100));
+        welcomePanel.add(Box.createVerticalStrut(40));
+        welcomePanel.add(Box.createVerticalStrut(100));
+        welcomePanel.add(createdBy);
+        welcomePanel.add(authorsNames);
         add(mainPanel);
         add(controlPanel);
         

@@ -1,7 +1,6 @@
 package calculator;
 
 
-
 import java.util.ArrayList;
 
 /**
@@ -10,8 +9,6 @@ import java.util.ArrayList;
  * @author Thomas
  *
  */
-
-
 
 public class PokerCalculator {
 	//THe value of the hand.
