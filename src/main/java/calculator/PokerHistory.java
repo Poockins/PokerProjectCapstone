@@ -28,7 +28,7 @@ public class PokerHistory extends JPanel{
         
         JButton clearButton = new JButton("Clear History");
         JButton deleteHistoryButton = new JButton("Delete Entry");
-        JButton pokerCalculator = new JButton("Poker Calculator");
+        //JButton pokerCalculator = new JButton("Poker Calculator");
         
         calcPanel.add(sp);
         calcPanel.add(clearButton);

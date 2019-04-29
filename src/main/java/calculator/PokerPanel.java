@@ -10,6 +10,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -25,14 +27,48 @@ import javax.swing.border.TitledBorder;
  *
  * @author elich
  */
+
+
 public class PokerPanel extends JPanel{
     //
     String [] cardValue = {"2","3","4","5","6","7","8","9","10","Jack","Queen","King","Ace"};
     String [] suitValue = {"Hearts","Clubs","Diamonds","Spades"};
     JPanel pokerTable = new JPanel();
     JPanel historyPanel = new PokerHistory();
+    String numberOfPlayers = "";
+    int numPlayers = 1;
     
-    PlayerPanelFactory playerFactory = new PlayerPanelFactory();
+    //
+    String flop1ValueString="",flop1SuitString = "",flop2ValueString="",
+            flop2SuitString = "",flop3ValueString="",flop3SuitString="",
+            riverValueString="",riverSuitString="",turnValueString="",turnSuitString="";
+    String flop1="",flop2="",flop3="",river="",turn="";
+    
+    String player1Card1Value="",player1Card1Suit="",player1Card2Value="",player1Card2Suit="",
+            player2Card1Value="",player2Card1Suit="",player2Card2Value="",player2Card2Suit="",
+            player3Card1Value="",player3Card1Suit="",player3Card2Value="",player3Card2Suit="",
+            player4Card1Value="",player4Card1Suit="",player4Card2Value="",player4Card2Suit="",
+            player5Card1Value="",player5Card1Suit="",player5Card2Value="",player5Card2Suit="",
+            player6Card1Value="",player6Card1Suit="",player6Card2Value="",player6Card2Suit="",
+            player7Card1Value="",player7Card1Suit="",player7Card2Value="",player7Card2Suit="",
+            player8Card1Value="",player8Card1Suit="",player8Card2Value="",player8Card2Suit="";
+    
+    String player1Card1="",player1Card2="",
+            player2Card1="",player2Card2="",
+            player3Card1="",player3Card2="",
+            player4Card1="",player4Card2="",
+            player5Card1="",player5Card2="",
+            player6Card1="",player6Card2="",
+            player7Card1="",player7Card2="",
+            player8Card1="",player8Card2="";
+    
+    String card1Value="",card1Suit="",card2Value="",card2Suit="";
+    String card1="",card2="";
+    
+    //Database inception
+    //DBConnection db = new DBConnection();
+    
+//    PlayerPanelFactory playerFactory = new PlayerPanelFactory();
     Border blackline = BorderFactory.createLineBorder(Color.black);
     
     public PokerPanel(){
@@ -107,6 +143,7 @@ public class PokerPanel extends JPanel{
         player1Title.setTitleJustification(TitledBorder.LEFT);
         player1.setBorder(player1Title);
         JButton addPlayer1 = new JButton("Add");
+        addPlayer1.setVisible(false);
         player1.add(addPlayer1);
         repaint();
 
@@ -115,6 +152,7 @@ public class PokerPanel extends JPanel{
         player2Title.setTitleJustification(TitledBorder.LEFT);
         player2.setBorder(player2Title);
         JButton addPlayer2 = new JButton("Add");
+        addPlayer2.setVisible(false);
         player2.add(addPlayer2);
         repaint();
 
@@ -123,6 +161,7 @@ public class PokerPanel extends JPanel{
         player3Title.setTitleJustification(TitledBorder.LEFT);
         player3.setBorder(player3Title);
         JButton addPlayer3 = new JButton("Add");
+        addPlayer3.setVisible(false);
         player3.add(addPlayer3);
         repaint();
         
@@ -131,6 +170,7 @@ public class PokerPanel extends JPanel{
         player4Title.setTitleJustification(TitledBorder.LEFT);
         player4.setBorder(player4Title);
         JButton addPlayer4 = new JButton("Add");
+        addPlayer4.setVisible(false);
         player4.add(addPlayer4);
         repaint();
 
@@ -139,6 +179,7 @@ public class PokerPanel extends JPanel{
         player5Title.setTitleJustification(TitledBorder.LEFT);
         player5.setBorder(player5Title);
         JButton addPlayer5 = new JButton("Add");
+        addPlayer5.setVisible(false);
         player5.add(addPlayer5);
         repaint();
 
@@ -147,6 +188,7 @@ public class PokerPanel extends JPanel{
         player6Title.setTitleJustification(TitledBorder.LEFT);
         player6.setBorder(player6Title);
         JButton addPlayer6 = new JButton("Add");
+        addPlayer6.setVisible(false);
         player6.add(addPlayer6);
         repaint();
 
@@ -155,6 +197,7 @@ public class PokerPanel extends JPanel{
         player7Title.setTitleJustification(TitledBorder.LEFT);
         player7.setBorder(player7Title);
         JButton addPlayer7 = new JButton("Add");
+        addPlayer7.setVisible(false);
         player7.add(addPlayer7);
         repaint();
         
@@ -163,6 +206,7 @@ public class PokerPanel extends JPanel{
         player8Title.setTitleJustification(TitledBorder.LEFT);
         player8.setBorder(player8Title);
         JButton addPlayer8 = new JButton("Add");
+        addPlayer8.setVisible(false);
         player8.add(addPlayer8);
         repaint();
         
@@ -196,11 +240,12 @@ public class PokerPanel extends JPanel{
         
         //Misc. Components
         JPanel miscPanel = new JPanel();
-        miscPanel.setLayout(new BoxLayout(miscPanel, BoxLayout.Y_AXIS));
-        JButton databaseButton = new JButton("Go to database");
+        miscPanel.setLayout(new BoxLayout(miscPanel, BoxLayout.X_AXIS));
+        JButton databaseButton = new JButton("Save to Database");
         JButton clearButton = new JButton("Clear Form");
-       // miscPanel.add(databaseButton);
         miscPanel.add(clearButton);
+        miscPanel.add(databaseButton);
+        
         
         //Layout Management for the Poker Panel
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -244,73 +289,236 @@ public class PokerPanel extends JPanel{
         c.gridx=3;
         c.gridy=4;
         add(miscPanel,c);
+        //intializes the number of players in the calculator
+        playerBox.setSelectedIndex(0);
+        numberOfPlayers = playerBox.getSelectedItem().toString();
+        numPlayers = Integer.parseInt(numberOfPlayers);
+        
         
         //Button Controls
         //The addPlayer# buttons all will replaces the contents of their panel 
         //with the new contents of the the player factory
         addPlayer1.addActionListener((ActionEvent e) -> {
             player1.removeAll();
-            player1.add(playerFactory.PlayerPanelFactory("Player1"));
+            player1.add(playerPanelFactory("Player1",1));
             //welcomeScreen.get
             repaint();
             validate();
         });
         addPlayer2.addActionListener((ActionEvent e) -> {
             player2.removeAll();
-            player2.add(playerFactory.PlayerPanelFactory("Player2"));
+            player2.add(playerPanelFactory("Player2",2));
             getParent().repaint();
      //       contentPane.repaint();
             validate();
         });
         addPlayer3.addActionListener((ActionEvent e) -> {
             player3.removeAll();
-            player3.add(playerFactory.PlayerPanelFactory("Player3"));
+            player3.add(playerPanelFactory("Player3",3));
             getParent().repaint();
     //        contentPane.repaint();
             validate();
         });
         addPlayer4.addActionListener((ActionEvent e) -> {
             player4.removeAll();
-            player4.add(playerFactory.PlayerPanelFactory("Player4"));
+            player4.add(playerPanelFactory("Player4",4));
             repaint();
             validate();
         });
         addPlayer5.addActionListener((ActionEvent e) -> {
             player5.removeAll();
-            player5.add(playerFactory.PlayerPanelFactory("Player5"));
+            player5.add(playerPanelFactory("Player5",5));
             repaint();
             validate();
         });
         addPlayer6.addActionListener((ActionEvent e) -> {
             player6.removeAll();
-            player6.add(playerFactory.PlayerPanelFactory("Player6"));
+            player6.add(playerPanelFactory("Player6",6));
             repaint();
             validate();
         });
         addPlayer7.addActionListener((ActionEvent e) -> {
             player7.removeAll();
-            player7.add(playerFactory.PlayerPanelFactory("Player7"));
+            player7.add(playerPanelFactory("Player7",7));
             repaint();
             validate();
         });
         addPlayer8.addActionListener((ActionEvent e) -> {
             player8.removeAll();
-            player8.add(playerFactory.PlayerPanelFactory("Player8"));
+            player8.add(playerPanelFactory("Player8",8));
             repaint();
             validate();
+        });
+        databaseButton.addActionListener((ActionEvent e) -> {
+            makeDiaryEntry(numPlayers);
+        });
+        
+        //Listeners for ComboBoxes 
+        flop1Value.addActionListener((ActionEvent e)-> {
+            flop1ValueString=flop1Value.getSelectedItem().toString();
+        });
+        flop1Suit.addActionListener((ActionEvent e)-> {
+            flop1SuitString=flop1Suit.getSelectedItem().toString();
+        });
+        flop2Value.addActionListener((ActionEvent e)-> {
+            flop2ValueString=flop2Value.getSelectedItem().toString();        
+        });
+        flop2Suit.addActionListener((ActionEvent e)-> {
+            flop2SuitString=flop2Suit.getSelectedItem().toString();
+        });
+        flop3Value.addActionListener((ActionEvent e)-> {
+            flop3ValueString=flop3Value.getSelectedItem().toString();        
+        });
+        flop3Suit.addActionListener((ActionEvent e)-> {
+            flop3SuitString=flop3Suit.getSelectedItem().toString();        
+        });
+        riverValue.addActionListener((ActionEvent e)-> {
+            riverValueString=riverValue.getSelectedItem().toString();        
+        });
+        riverSuit.addActionListener((ActionEvent e)-> {
+            riverSuitString=riverSuit.getSelectedItem().toString();        
+        });
+        turnValue.addActionListener((ActionEvent e)-> {
+            turnValueString=turnValue.getSelectedItem().toString();        
+        });
+        turnSuit.addActionListener((ActionEvent e)-> {
+            turnSuitString=turnSuit.getSelectedItem().toString();  
+        });
+        //Switch used to toggle the invisible buttons on the screen
+        playerBox.addActionListener((ActionEvent e)-> {
+            numberOfPlayers = playerBox.getSelectedItem().toString();
+            int numPlayers = Integer.parseInt(numberOfPlayers);
+            switch(numPlayers){
+                case 1:
+                    addPlayer1.doClick();
+                    break;
+                case 2:
+                    addPlayer1.doClick();
+                    addPlayer2.doClick();
+                    break;
+                case 3:
+                    addPlayer1.doClick();
+                    addPlayer2.doClick();
+                    addPlayer3.doClick();
+                    break;
+                case 4:
+                    addPlayer1.doClick();
+                    addPlayer2.doClick();
+                    addPlayer3.doClick();
+                    addPlayer4.doClick();
+                    break;
+                case 5:
+                    addPlayer1.doClick();
+                    addPlayer2.doClick();
+                    addPlayer3.doClick();
+                    addPlayer4.doClick();
+                    addPlayer5.doClick();
+                    break;
+                case 6:
+                    addPlayer1.doClick();
+                    addPlayer2.doClick();
+                    addPlayer3.doClick();
+                    addPlayer4.doClick();
+                    addPlayer5.doClick();
+                    addPlayer6.doClick();
+                    break;
+                case 7:
+                    addPlayer1.doClick();
+                    addPlayer2.doClick();
+                    addPlayer3.doClick();
+                    addPlayer4.doClick();
+                    addPlayer5.doClick();
+                    addPlayer6.doClick();
+                    addPlayer7.doClick();
+                    break;
+                case 8:
+                    addPlayer1.doClick();
+                    addPlayer2.doClick();
+                    addPlayer3.doClick();
+                    addPlayer4.doClick();
+                    addPlayer5.doClick();
+                    addPlayer6.doClick();
+                    addPlayer7.doClick();
+                    addPlayer8.doClick();
+                    
+                    break;
+                default:
+                    return;
+            }
         });
         repaint();
         validate();
     }
-    
-}
-//PlayerPanelFactory creates a player panel that has the component of what a 
-//player should be able to enter for their hand
-class PlayerPanelFactory extends JPanel{
-    String [] cardValue = {"2","3","4","5","6","7","8","9","10","Jack","Queen","King","Ace"};
-    String [] suitValue = {"Hearts","Clubs","Diamonds","Spades"};
-    Border blackline = BorderFactory.createLineBorder(Color.black);
-    JPanel PlayerPanelFactory(String name){
+    //Method used to create a diary of the table
+    void makeDiaryEntry(int num){
+        flop1=flop1ValueString+" "+flop1SuitString;
+        flop2=flop2ValueString+" "+flop2SuitString;
+        flop3=flop3ValueString+" "+flop3SuitString;
+        river=riverValueString+" "+riverSuitString;
+        turn=turnValueString+" "+turnSuitString;
+        
+        switch(num){
+                case 1:
+                    player1Card1 = player1Card1Value+" "+player1Card1Suit;player1Card2 = player1Card2Value+""+player1Card2Suit;
+                    break;
+                case 2:
+                    player1Card1 = player1Card1Value+" "+player1Card1Suit;player1Card2 = player1Card2Value+""+player1Card2Suit;
+                    player2Card1 = player2Card1Value+" "+player2Card1Suit;player2Card2 = player2Card2Value+""+player2Card2Suit;
+                    break;
+                case 3:
+                    player1Card1 = player1Card1Value+" "+player1Card1Suit;player1Card2 = player1Card2Value+""+player1Card2Suit;
+                    player2Card1 = player2Card1Value+" "+player2Card1Suit;player2Card2 = player2Card2Value+""+player2Card2Suit;
+                    player3Card1 = player3Card1Value+" "+player3Card1Suit;player3Card2 = player3Card2Value+""+player3Card2Suit;
+                    break;
+                case 4:
+                    player1Card1 = player1Card1Value+" "+player1Card1Suit;player1Card2 = player1Card2Value+""+player1Card2Suit;
+                    player2Card1 = player2Card1Value+" "+player2Card1Suit;player2Card2 = player2Card2Value+""+player2Card2Suit;
+                    player3Card1 = player3Card1Value+" "+player3Card1Suit;player3Card2 = player3Card2Value+""+player3Card2Suit;
+                    player4Card1 = player4Card1Value+" "+player4Card1Suit;player4Card2 = player4Card2Value+""+player4Card2Suit;
+                    break;
+                case 5:
+                    player1Card1 = player1Card1Value+" "+player1Card1Suit;player1Card2 = player1Card2Value+""+player1Card2Suit;
+                    player2Card1 = player2Card1Value+" "+player2Card1Suit;player2Card2 = player2Card2Value+""+player2Card2Suit;
+                    player3Card1 = player3Card1Value+" "+player3Card1Suit;player3Card2 = player3Card2Value+""+player3Card2Suit;
+                    player4Card1 = player4Card1Value+" "+player4Card1Suit;player4Card2 = player4Card2Value+""+player4Card2Suit;
+                    player5Card1 = player5Card1Value+" "+player5Card1Suit;player5Card2 = player5Card2Value+""+player5Card2Suit;
+                    break;
+                case 6:
+                    player1Card1 = player1Card1Value+" "+player1Card1Suit;player1Card2 = player1Card2Value+""+player1Card2Suit;
+                    player2Card1 = player2Card1Value+" "+player2Card1Suit;player2Card2 = player2Card2Value+""+player2Card2Suit;
+                    player3Card1 = player3Card1Value+" "+player3Card1Suit;player3Card2 = player3Card2Value+""+player3Card2Suit;
+                    player4Card1 = player4Card1Value+" "+player4Card1Suit;player4Card2 = player4Card2Value+""+player4Card2Suit;
+                    player5Card1 = player5Card1Value+" "+player5Card1Suit;player5Card2 = player5Card2Value+""+player5Card2Suit;
+                    player6Card1 = player6Card1Value+" "+player6Card1Suit;player6Card2 = player6Card2Value+""+player6Card2Suit;
+                    break;
+                case 7:
+                    player1Card1 = player1Card1Value+" "+player1Card1Suit;player1Card2 = player1Card2Value+""+player1Card2Suit;
+                    player2Card1 = player2Card1Value+" "+player2Card1Suit;player2Card2 = player2Card2Value+""+player2Card2Suit;
+                    player3Card1 = player3Card1Value+" "+player3Card1Suit;player3Card2 = player3Card2Value+""+player3Card2Suit;
+                    player4Card1 = player4Card1Value+" "+player4Card1Suit;player4Card2 = player4Card2Value+""+player4Card2Suit;
+                    player5Card1 = player5Card1Value+" "+player5Card1Suit;player5Card2 = player5Card2Value+""+player5Card2Suit;
+                    player6Card1 = player6Card1Value+" "+player6Card1Suit;player6Card2 = player6Card2Value+""+player6Card2Suit;
+                    player7Card1 = player7Card1Value+" "+player7Card1Suit;player7Card2 = player7Card2Value+""+player7Card2Suit;
+                    break;
+                case 8:
+                    player1Card1 = player1Card1Value+" "+player1Card1Suit;player1Card2 = player1Card2Value+""+player1Card2Suit;
+                    player2Card1 = player2Card1Value+" "+player2Card1Suit;player2Card2 = player2Card2Value+""+player2Card2Suit;
+                    player3Card1 = player3Card1Value+" "+player3Card1Suit;player3Card2 = player3Card2Value+""+player3Card2Suit;
+                    player4Card1 = player4Card1Value+" "+player4Card1Suit;player4Card2 = player4Card2Value+""+player4Card2Suit;
+                    player5Card1 = player5Card1Value+" "+player5Card1Suit;player5Card2 = player5Card2Value+""+player5Card2Suit;
+                    player6Card1 = player6Card1Value+" "+player6Card1Suit;player6Card2 = player6Card2Value+""+player6Card2Suit;
+                    player7Card1 = player7Card1Value+" "+player7Card1Suit;player7Card2 = player7Card2Value+""+player7Card2Suit;
+                    player8Card1 = player8Card1Value+" "+player8Card1Suit;player8Card2 = player8Card2Value+""+player8Card2Suit;
+                    
+                    break;
+                default:
+                    return;
+            }
+        //Once all of the strings have a something in them then they can be added to the diary here. 
+        
+    }
+    JPanel playerPanelFactory(String name, int num){
+        setName(name);
         JPanel player = new JPanel();
         player.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -328,6 +536,136 @@ class PlayerPanelFactory extends JPanel{
         player.add(boxValue2,c);
         c.gridx=1;
         player.add(boxSuit2,c);
+        //internal Button listeners
+        boxValue1.addActionListener((ActionEvent e)-> {
+               // card1Value=boxValue1.getSelectedItem().toString();
+                switch(num){
+                    case 1: 
+                        player1Card1Value=boxValue1.getSelectedItem().toString();
+                        break;
+                    case 2:
+                        player2Card1Value=boxValue1.getSelectedItem().toString();
+                        break;
+                    case 3:
+                        player3Card1Value=boxValue1.getSelectedItem().toString();
+                        break;
+                    case 4:
+                        player4Card1Value=boxValue1.getSelectedItem().toString();
+                        break;
+                    case 5:
+                        player5Card1Value=boxValue1.getSelectedItem().toString();
+                        break;
+                    case 6:
+                        player6Card1Value=boxValue1.getSelectedItem().toString();
+                        break;
+                    case 7:
+                        player7Card1Value=boxValue1.getSelectedItem().toString();
+                        break;
+                    case 8:
+                        player8Card1Value=boxValue1.getSelectedItem().toString();
+                        break;
+                    default:
+                        return;
+                }
+        });
+        boxSuit1.addActionListener((ActionEvent e)-> {
+               // card1Suit=boxSuit1.getSelectedItem().toString();
+                switch(num){
+                    case 1: 
+                        player1Card1Suit=boxSuit1.getSelectedItem().toString();
+                        break;
+                    case 2:
+                        player2Card1Suit=boxSuit1.getSelectedItem().toString();
+                        break;
+                    case 3:
+                        player3Card1Suit=boxSuit1.getSelectedItem().toString();
+                        break;
+                    case 4:
+                        player4Card1Suit=boxSuit1.getSelectedItem().toString();
+                        break;
+                    case 5:
+                        player5Card1Suit=boxSuit1.getSelectedItem().toString();
+                        break;
+                    case 6:
+                        player6Card1Suit=boxSuit1.getSelectedItem().toString();
+                        break;
+                    case 7:
+                        player7Card1Suit=boxSuit1.getSelectedItem().toString();
+                        break;
+                    case 8:
+                        player8Card1Suit=boxSuit1.getSelectedItem().toString();
+                        break;
+                    default:
+                        return;
+                }
+        });
+        boxValue2.addActionListener((ActionEvent e)-> {
+               // card2Value=boxValue2.getSelectedItem().toString();
+                switch(num){
+                    case 1: 
+                        player1Card2Value=boxValue2.getSelectedItem().toString();
+                        break;
+                    case 2:
+                        player2Card2Value=boxValue2.getSelectedItem().toString();
+                        break;
+                    case 3:
+                        player3Card2Value=boxValue2.getSelectedItem().toString();
+                        break;
+                    case 4:
+                        player4Card2Value=boxValue2.getSelectedItem().toString();
+                        break;
+                    case 5:
+                        player5Card2Value=boxValue2.getSelectedItem().toString();
+                        break;
+                    case 6:
+                        player6Card2Value=boxValue2.getSelectedItem().toString();
+                        break;
+                    case 7:
+                        player7Card2Value=boxValue2.getSelectedItem().toString();
+                        break;
+                    case 8:
+                        player8Card2Value=boxValue2.getSelectedItem().toString();
+                        break;
+                    default:
+                        return;
+                }
+        });
+        boxSuit2.addActionListener((ActionEvent e)-> {
+               // card2Suit=boxSuit2.getSelectedItem().toString();
+                switch(num){
+                    case 1: 
+                        player1Card2Value=boxSuit2.getSelectedItem().toString();
+                        break;
+                    case 2:
+                        player2Card2Value=boxSuit2.getSelectedItem().toString();
+                        break;
+                    case 3:
+                        player3Card2Value=boxSuit2.getSelectedItem().toString();
+                        break;
+                    case 4:
+                        player4Card2Value=boxSuit2.getSelectedItem().toString();
+                        break;
+                    case 5:
+                        player5Card2Value=boxSuit2.getSelectedItem().toString();
+                        break;
+                    case 6:
+                        player6Card2Value=boxSuit2.getSelectedItem().toString();
+                        break;
+                    case 7:
+                        player7Card2Value=boxSuit2.getSelectedItem().toString();
+                        break;
+                    case 8:
+                        player8Card2Value=boxSuit2.getSelectedItem().toString();
+                        break;
+                    default:
+                        return;
+                }
+        });
         return player;
     }
+    
+    
 }
+//PlayerPanelFactory creates a player panel that has the component of what a 
+//player should be able to enter for their hand
+
