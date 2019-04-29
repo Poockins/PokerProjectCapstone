@@ -6,7 +6,7 @@ package calculator;
  * and open the template in the editor.
  */
 
-package calculator;
+//package calculator;
 
 import calculator.Rank;
 import calculator.Suit;
