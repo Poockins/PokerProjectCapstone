@@ -86,7 +86,7 @@ public class Player {
    *
    * @return Player from found player data
    */
-  public Player findById(int id) {
+  public static Player findById(int id) {
     String foundName = null;
     try {
       DBConnection db = new DBConnection();

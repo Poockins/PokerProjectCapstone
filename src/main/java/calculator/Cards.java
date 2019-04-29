@@ -46,6 +46,19 @@ public class Cards implements Comparable<Cards> {
     return this.suit;
   }
 
+  /**
+   * Creates a Card from a database formatted string
+   *
+   * @param data String representation of the card
+   * @return Card created from database string
+   */
+  public static Cards stringToCard(String data) {
+    String[] split = data.split("::'");
+    Rank rank = Rank.valueOf(split[0]);
+    Suit suit = Suit.valueOf(split[1]);
+    return new Cards(rank, suit);
+  }
+
   private static String cardName(final Rank rank, final Suit suit) {
     return rank + " of " + suit;
   }
