@@ -7,7 +7,9 @@
  */
 package calculator;
 
-import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Map;
+import java.util.List;
 import java.util.ArrayList;
 
 public class Player {
@@ -16,19 +18,18 @@ public class Player {
   private int id;
 
   /**
-   * Constructor
+   * Constructor to create a new database record
    *
    * @param name player name
    */
   public Player(String name) {
     try {
       DBConnection db = new DBConnection();
-      String query = String.format("INSERT INTO players (name) VALUES (%s)", name);
-      ArrayList<Integer> keys = db.insertQuery(query);
+      List<Map<String, Object>> results = db.insertQuery("INSERT INTO players (name) VALUES (?)", name);
+      Map<String, Object> row = results.get(0);
       this.name = name;
-      this.id = keys.get(0);
-      db.conn.close();
-    } catch (Exception ex) {
+      this.id = (Integer)row.get("id");
+    } catch (SQLException ex) {
       ex.printStackTrace();
     }
   }
@@ -43,6 +44,16 @@ public class Player {
   public Player(int id, String name) {
     this.id = id;
     this.name = name;
+  }
+
+  /**
+   * Constructor from map from database
+   *
+   * @param params
+   */
+  public Player(Map<String, Object> params) {
+    this.id = (Integer)params.get("id");
+    this.name = (String)params.get("name");
   }
 
   /**
@@ -61,15 +72,7 @@ public class Player {
    * @return Nothing
    */
   public void setName(String name) {
-    try {
-      DBConnection db = new DBConnection();
-      String query = String.format("UPDATE players SET name = %s WHERE id = %i", name, this.id);
-      db.updateQuery(query);
-      this.name = name;
-      db.conn.close();
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
+    this.name = name;
   }
 
   /**
@@ -87,21 +90,37 @@ public class Player {
    * @return Player from found player data
    */
   public static Player findById(int id) {
-    String foundName = null;
+    List<Map<String, Object>> found = new ArrayList<>();
     try {
       DBConnection db = new DBConnection();
-      ResultSet found = db.selectQuery("SELECT * FROM players WHERE id=" + id);
-      found.first();
-      foundName = found.getString(2);
-      db.conn.close();
+      found = db.selectQuery("SELECT * FROM players WHERE id = ?", id);
+    } catch (SQLException ex) {
+      ex.printStackTrace();
+    }
+    Map<String, Object> row = found.get(0);
+
+    return new Player(row);
+  }
+
+  /**
+   * Saves the Player to the database
+   *
+   * @return status indicating whether save was successful
+   */
+  public boolean save() {
+    boolean status = false;
+    int updated;
+    try {
+      DBConnection db = new DBConnection();
+      updated = db.updateQuery("UPDATE players SET name = ? WHERE id = ?", this.name, this.id);
+
+      if (updated > 0) {
+        status = true;
+      }
     } catch (Exception ex) {
       ex.printStackTrace();
     }
 
-    if (foundName != null) {
-      return new Player(id, foundName);
-    } else {
-      return null;
-    }
+    return status;
   }
 }

@@ -14,7 +14,6 @@ public class StartCalculator {
       // Database setup on app start
       DBConnection db = new DBConnection();
       db.setup();
-      db.conn.close();
       // End database setup
     } catch (Exception ex) {
       ex.printStackTrace(); // TODO: Improve error handling

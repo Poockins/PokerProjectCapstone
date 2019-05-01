@@ -7,26 +7,41 @@
 
 package calculator;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
+import java.sql.*;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.MapListHandler;
+import org.hsqldb.jdbc.JDBCDataSource;
 
 public class DBConnection {
 
   static final String DB_PATH = "data/poker";
-  public Connection conn; // Persist database connection until explicitly shut down
+  public QueryRunner runner;
+  private MapListHandler handler = new MapListHandler();
+  private JDBCDataSource dataSource;
 
   /**
    * Constructor
-   * @throws Exception
    */
-  public DBConnection() throws Exception {
-    Class.forName("org.hsqldb.jdbcDriver");
+  public DBConnection() {
+    this.dataSource = new JDBCDataSource();
+    dataSource.setDatabase("jdbc:hsqldb:file:" + DB_PATH);
+    dataSource.setUser("sa");
+    dataSource.setPassword("");
+    runner = new QueryRunner(dataSource);
+  }
 
-    conn = DriverManager.getConnection("jdbc:hsqldb:file:" + DB_PATH, "SA", "");
+  public DBConnection(String dbPath) {
+    this.dataSource = new JDBCDataSource();
+    dataSource.setDatabase("jdbc:hsqldb:file:" + dbPath);
+    dataSource.setUser("sa");
+    dataSource.setPassword("");
+    runner = new QueryRunner(dataSource);
+  }
+
+  public Connection getConnection() throws SQLException {
+    return this.dataSource.getConnection();
   }
 
   /**
@@ -48,84 +63,52 @@ public class DBConnection {
    * @throws SQLException
    */
   public void reset() throws SQLException {
-    Statement statement = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-    statement.execute("TRUNCATE SCHEMA PUBLIC RESTART IDENTITY AND COMMIT NO CHECK");
-    statement.close();
+    runner.execute("TRUNCATE SCHEMA PUBLIC RESTART IDENTITY AND COMMIT NO CHECK");
+  }
+
+  public void dropAllTables() throws SQLException {
+    runner.execute("DROP SCHEMA PUBLIC CASCADE");
   }
 
   /**
    * Wraps a SELECT SQL command
    *
    * @param query SELECT query to run
-   * @return the ResultSet from the SQL query
+   * @return the results from the query as a list of maps
    * @throws SQLException
    */
-  public ResultSet selectQuery(String query) throws SQLException {
-    Statement st;
-    ResultSet rs;
+  public List<Map<String, Object>> selectQuery(String query, Object... params) throws SQLException {
+    List<Map<String, Object>> results = runner.query(query, handler, params);
 
-    st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-
-    rs = st.executeQuery(query);
-
-    st.close();
-
-    return rs;
+    return results;
   }
 
   /**
    * Wraps a CREATE, DROP, or UPDATE SQL command
    *
    * @param query SQL query to run
-   * @return boolean representing success of the query
+   * @param params any replacement parameters
+   * @return number of rows updated
    * @throws SQLException
    */
-  public boolean updateQuery(String query) throws SQLException {
-    Statement st;
-    boolean status;
+  public int updateQuery(String query, Object... params) throws SQLException {
+    int result = runner.update(query, params);
 
-    st = conn.createStatement();
-    int i = st.executeUpdate(query);
-
-    if (i == -1) {
-      status = false;
-    } else {
-      status = true;
-    }
-
-    st.close();
-
-    return status;
+    return result;
   }
 
   /**
    * Wraps an INSERT SQL query
    *
    * @param query INSERT query to run
-   * @return ArrayList containing generated keys from new records
+   * @param params Replacement parameters for query
+   * @return List containing map of auto-generated keys
    * @throws SQLException
    */
-  public ArrayList<Integer> insertQuery(String query) throws SQLException {
-    Statement st;
-    ResultSet rs;
-    ArrayList<Integer> keys = new ArrayList<>();
+  public List<Map<String, Object>> insertQuery(String query, Object... params) throws SQLException {
+    List<Map<String, Object>> results = runner.insert(query, handler, params);
 
-    st = conn.createStatement();
-    int i = st.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
-
-    if (i == -1) {
-      throw new SQLException("INSERT failed: " + query);
-    } else {
-      rs = st.getGeneratedKeys();
-
-      while (rs.next()) {
-        keys.add(rs.getInt(1));
-      }
-    }
-
-    rs.close();
-    st.close();
-    return keys;
+    return results;
   }
 
   /**

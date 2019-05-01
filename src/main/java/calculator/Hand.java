@@ -7,9 +7,7 @@
  */
 package calculator;
 
-import java.sql.Array;
 import java.sql.SQLException;
-import java.sql.ResultSet;
 import java.util.*;
 import java.util.stream.*;
 
@@ -18,7 +16,7 @@ public class Hand {
   private Cards[] cards;
   private int id;
   private Player player;
-  private DBConnection db;
+  private Game game;
 
   /**
    * Construct a Hand given cards and a player
@@ -28,15 +26,15 @@ public class Hand {
    */
   public Hand(Cards[] cards, Player player) {
     try {
-      db = new DBConnection();
-      String insertQuery = String
-          .format("INSERT INTO hands (cards, player_id) VALUES (ARRAY%s, %i)",
-              cardsToString(cards), player.getId());
-      ArrayList<Integer> keys = db.insertQuery(insertQuery);
+      DBConnection db = new DBConnection();
+      String query = "INSERT INTO hands (cards, player_id) VALUES (?, ?)";
+      String cardParam = String.format("ARRAY[%s]", Cards.arrayToString(cards));
+      List<Map<String, Object>> results = db.insertQuery(query, cardParam, this.player.getId());
+      Map<String, Object> row = results.get(0);
       this.cards = cards;
       this.player = player;
-      this.id = keys.get(0);
-    } catch (Exception ex) {
+      this.id = (Integer)row.get("id");
+    } catch (SQLException ex) {
       ex.printStackTrace();
     }
   }
@@ -47,12 +45,33 @@ public class Hand {
    * @param player
    * @param id
    */
-  public Hand(Cards[] cards, Player player, int id) {
+  public Hand(Cards[] cards, Player player, Game game, int id) {
     this.cards = cards;
     this.player = player;
+    this.game = game;
     this.id = id;
   }
 
+  /**
+   * Construct a Hand given params from the database
+   *
+   * @param params
+   */
+  public Hand(Map<String, Object> params) {
+    String[] cardStrings = (String[])params.get("cards");
+    this.cards = Cards.stringToArray(cardStrings);
+    int playerId = (Integer)params.get("player_id");
+    this.player = Player.findById(playerId);
+    int gameId = (Integer)params.get("game_id");
+    this.game = Game.findById(gameId);
+    this.id = (Integer)params.get("id");
+  }
+
+  /**
+   * Get the cards in the hand
+   *
+   * @return the cards in the hand
+   */
   public Cards[] getCards() {
     return cards;
   }
@@ -61,27 +80,16 @@ public class Hand {
    * Sets the cards for the Hand
    *
    * @param cards
-   * @throws SQLException
    */
-  public void setCards(Cards[] cards) throws SQLException {
-    boolean status = false;
-
-    try {
-      String updateQuery = String
-          .format("UPDATE hands SET cards = ARRAY[%s] WHERE id = %i", cardsToString(cards),
-              this.id);
-      status = db.updateQuery(updateQuery);
-    } catch (SQLException ex) {
-      ex.printStackTrace();
-    }
-
-    if (status) {
-      this.cards = cards;
-    } else {
-      throw new SQLException("Error setting cards for Hand " + this.id);
-    }
+  public void setCards(Cards[] cards) {
+    this.cards = cards;
   }
 
+  /**
+   * Get the player of the hand
+   *
+   * @return player for the hand
+   */
   public Player getPlayer() {
     return player;
   }
@@ -90,24 +98,15 @@ public class Hand {
    * Sets the player for the Hand
    *
    * @param player
-   * @throws SQLException
    */
-  public void setPlayer(Player player) throws SQLException {
-    boolean status = false;
-    try {
-      String updateQuery = String
-          .format("UPDATE hands SET player_id = %i WHERE id = %i", player.getId(), this.id);
-      status = db.updateQuery(updateQuery);
-    } catch (SQLException ex) {
-      ex.printStackTrace();
-    }
-    if (status) {
-      this.player = player;
-    } else {
-      throw new SQLException("Error setting player for Hand " + this.id);
-    }
+  public void setPlayer(Player player) {
+    this.player = player;
   }
 
+  /**
+   * Gets the database id for the Hand
+   * @return database id
+   */
   public int getId() {
     return id;
   }
@@ -118,37 +117,45 @@ public class Hand {
    * @param id database id
    * @return Hand as found from id, or null if no Hand is found
    */
-  public Hand findById(int id) {
-    Array foundCards;
-    int foundPlayer;
-    Player player = null;
-    Cards[] cards = new Cards[2];
-    String[] cardStrings = new String[0];
+  public static Hand findById(int id) {
+    Map<String, Object> row;
+    List<Map<String, Object>> found = new ArrayList<>();
 
     try {
       DBConnection db = new DBConnection();
-      ResultSet found = db.selectQuery("SELECT cards, player_id FROM hands WHERE id=" + id);
-      found.first();
+      found = db.selectQuery("SELECT cards, player_id FROM hands WHERE id = ?", id);
+    } catch (SQLException ex) {
+      ex.printStackTrace();
+    }
 
-      foundCards = found.getArray(1);
-      cardStrings = (String[]) foundCards.getArray();
-      for (int i = 0; i < 2; i++) {
-        cards[i] = Cards.stringToCard(cardStrings[i]);
+    row = found.get(0);
+    if (row != null) {
+      return new Hand(row);
+    } else {
+      return null;
+    }
+  }
+
+  /**
+   * Saves the Hand to the database
+   *
+   * @return boolean status of save success
+   */
+  public boolean save() {
+    boolean status = false;
+    int updated;
+
+    try {
+      DBConnection db = new DBConnection();
+      updated = db.updateQuery("UPDATE hands SET player_id = ?, cards = ?, game_id=?, WHERE id = ?", player.getId(), Cards.arrayToString(this.cards), game.getId(), this.id);
+      if (updated > 0) {
+        status = true;
       }
-
-      foundPlayer = found.getInt(2);
-      player = Player.findById(foundPlayer);
-
-      db.conn.close();
     } catch (Exception ex) {
       ex.printStackTrace();
     }
 
-    if (player != null && cardStrings.length > 0) {
-      return new Hand(cards, player);
-    } else {
-      return null;
-    }
+    return status;
   }
 
   public double calculateWin() {///// Needs changed
@@ -159,17 +166,5 @@ public class Hand {
 
   public String toString() {
     return "";
-  }
-
-  /**
-   * Converts an array of cards to a comma delimited string representation
-   *
-   * @param cards card to convert to string
-   * @return comma delimited string of card
-   */
-  private String cardsToString(Cards[] cards) {
-    List<Cards> CardsList = Arrays.asList(cards);
-    return String
-        .join(",", CardsList.stream().map(c -> c.toDataString()).collect(Collectors.toList()));
   }
 }
