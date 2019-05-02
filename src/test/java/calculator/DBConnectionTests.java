@@ -1,43 +1,53 @@
 package calculator;
 
 import org.junit.jupiter.api.*;
+
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.apache.commons.dbutils.DbUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
+import java.sql.Connection;
+
+import java.util.List;
+import java.util.Map;
 
 class DBConnectionTests {
+
   static DBConnection db;
   static Statement statement;
+  static Connection conn;
+  static final String DB_PATH = "data/test/poker";
 
-  @BeforeEach void initDBConnection() {
+  @BeforeAll
+  public static void initDBConnection() {
     try {
-      db = new DBConnection();
+      db = new DBConnection(DB_PATH);
+      db.dropAllTables();
       db.setup();
-      statement = db.conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-    } catch(Exception e) {
-      e.printStackTrace();
+      conn = db.getConnection();
+      statement = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+    } catch (SQLException ex) {
+      ex.printStackTrace();
     }
   }
 
-  @AfterEach void closeDBConnection() {
-    try {
-      db.conn.close();
-    } catch(Exception e) {
-      e.printStackTrace();
-    }
+  @AfterAll
+  public static void teardown() {
+    DbUtils.closeQuietly(statement);
+    DbUtils.closeQuietly(conn);
   }
 
   @Test
   @DisplayName("DB setup")
   void setupTest() {
     try {
-      ResultSet result = statement.executeQuery("SELECT COUNT(TABLE_NAME) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PUBLIC'");
+      ResultSet result = statement.executeQuery(
+          "SELECT COUNT(TABLE_NAME) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PUBLIC'");
       result.first();
       assertEquals(3, result.getInt(1));
-      statement.close();
     } catch (SQLException ex) {
       ex.printStackTrace();
     }
@@ -47,11 +57,12 @@ class DBConnectionTests {
   @DisplayName("SELECT query")
   void selectTest() {
     try {
-      ResultSet result = db.selectQuery("SELECT COUNT(TABLE_NAME) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PUBLIC'");
-      result.first();
-      assertEquals(3, result.getInt(1));
+      List<Map<String, Object>> result = db.selectQuery(
+          "SELECT COUNT(TABLE_NAME) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PUBLIC'");
+      Map<String, Object> row = result.get(0);
+      assertEquals(3, (int)(long)row.get("C1"));
     } catch (SQLException ex) {
-        ex.printStackTrace();
+      ex.printStackTrace();
     }
   }
 
@@ -60,12 +71,13 @@ class DBConnectionTests {
   void insertTest() {
     try {
       db.reset();
-      ArrayList<Integer> keys = db.insertQuery("INSERT INTO players (name) VALUES ('Linus Torvalds')");
+      List<Map<String, Object>> keys = db
+          .insertQuery("INSERT INTO players (name) VALUES ('Linus Torvalds')");
       ResultSet result = statement.executeQuery("SELECT name FROM players LIMIT 1");
       result.first();
-      assertEquals(1, keys.get(0));
+      Map<String, Object> row = keys.get(0);
+      assertEquals(1, row.get("id"));
       assertEquals("Linus Torvalds", result.getString(1));
-      statement.close();
     } catch (SQLException ex) {
       ex.printStackTrace();
     }
@@ -81,12 +93,11 @@ class DBConnectionTests {
       result1.first();
       assertEquals("Linus Torvalds", result1.getString(1));
 
-      boolean success = db.updateQuery("UPDATE players SET name = 'Aaron Patterson'");
+      int updated = db.updateQuery("UPDATE players SET name = 'Aaron Patterson'");
       ResultSet result2 = statement.executeQuery("SELECT name FROM players LIMIT 1");
       result2.first();
-      assertTrue(success);
+      assertEquals(1, updated);
       assertEquals("Aaron Patterson", result2.getString(1));
-      statement.close();
     } catch (SQLException ex) {
       ex.printStackTrace();
     }
@@ -96,15 +107,18 @@ class DBConnectionTests {
   @DisplayName("CREATE and DROP queries")
   void createAndDropTest() {
     try {
+      db.reset();
+      db.setup();
       db.updateQuery("CREATE TABLE test (id INT)");
-      ResultSet createResults = statement.executeQuery("SELECT COUNT(TABLE_NAME) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PUBLIC'");
+      ResultSet createResults = statement.executeQuery(
+          "SELECT COUNT(TABLE_NAME) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PUBLIC'");
       createResults.first();
       assertEquals(4, createResults.getInt(1));
       db.updateQuery("DROP SCHEMA PUBLIC CASCADE");
-      ResultSet dropResults = statement.executeQuery("SELECT COUNT(TABLE_NAME) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PUBLIC'");
+      ResultSet dropResults = statement.executeQuery(
+          "SELECT COUNT(TABLE_NAME) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PUBLIC'");
       dropResults.first();
       assertEquals(0, dropResults.getInt(1));
-      statement.close();
     } catch (SQLException ex) {
       ex.printStackTrace();
     }

@@ -1,5 +1,3 @@
-import calculator.DBConnection;
-
 /**
  * Main/Driver class for poker calculator
  *
@@ -13,10 +11,10 @@ public class StartCalculator {
 
   public static void main(String[] args) {
     try {
+      // Database setup on app start
       DBConnection db = new DBConnection();
-      //db.setup();
-      //db.conn.close();
-      WelcomeScreen gui = new WelcomeScreen();
+      db.setup();
+      // End database setup
     } catch (Exception ex) {
       ex.printStackTrace(); // TODO: Improve error handling
     }
