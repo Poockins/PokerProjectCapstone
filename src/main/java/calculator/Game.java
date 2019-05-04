@@ -10,6 +10,7 @@ package calculator;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Date;
 import java.lang.reflect.Field;
@@ -35,7 +36,7 @@ public class Game {
       List<Map<String, Object>> keys = db.insertQuery(query);
       Map<String, Object> resultRow = keys.get(0);
       this.id = (Integer)resultRow.get("id");
-      List<Map<String,Object>> results = db.selectQuery(String.format("SELECT created_at FROM games WHERE id=%i", this.id));
+      List<Map<String,Object>> results = db.selectQuery("SELECT created_at FROM games WHERE id=?", this.id);
       Map<String, Object> row = results.get(0);
       Date createdAt = (Date)row.get("createdAt");
       this.createdAt = createdAt;
@@ -83,6 +84,7 @@ public class Game {
     this.id = (Integer)params.get("id");
     this.hands = getHandsFromDB();
     this.createdAt = (Date)params.get("created_at");
+    this.players = getPlayers();
   }
 
   public Cards[] getFlop() {
@@ -137,14 +139,40 @@ public class Game {
 
   public void setHands(Hand[] hands) {
     this.hands = hands;
+    setPlayers();
   }
 
   public void addHand(Hand hand) {
-
+    ArrayList<Hand> newHands = new ArrayList<>(Arrays.asList(this.hands));
+    newHands.add(hand);
+    Hand[] converted = new Hand[newHands.size()];
+    this.hands = newHands.toArray(converted);
+    setPlayers();
   }
 
   public void removeHand(Hand hand) {
 
+    setPlayers();
+  }
+
+  public void setPlayers() {
+    Player[] players = new Player[this.hands.length];
+    for (int i = 0; i < this.hands.length; i++) {
+      Hand hand = this.hands[i];
+      players[i] = hand.getPlayer();
+    }
+
+    this.players = players;
+  }
+
+  /**
+   * Get the players in the game through their Hands
+   *
+   * @return players in the game
+   */
+  public Player[] getPlayers() {
+    setPlayers();
+    return this.players;
   }
 
   public static Game findById(int id) {
