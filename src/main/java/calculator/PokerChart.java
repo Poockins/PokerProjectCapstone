@@ -4,24 +4,30 @@ import java.util.Collections;
 import java.util.ListIterator;
 
 /**
- * This class will contain some poker odds in the form of boolean methods.
- * 
- * @author Thomas
+ * This class will contain some poker odds in the form of boolean methods. The poker odds are the
+ * most common that appear in the game of Texas Holdem This will determine the potential that the
+ * user has.
  *
+ * @author Thomas
  */
 public class PokerChart {
   // poker evaluation object
   private PokerEvaluator evaluator;
 
+  /**
+   * The Constructor
+   */
   public PokerChart() {
     evaluator = new PokerEvaluator();
   }
 
 
   /**
-   * It will check the inside straight draw probability.
-   * 
-   * @return boolean value
+   * It will check the if the users hand has a inside straight draw probability.
+   *
+   * @param userCards - The users hand
+   * @param communityCards - The community cards
+   * @return T or F - True if the the user has an inside Straight draw
    */
   public boolean hasInsideStraightDraw(ArrayList<Cards> userCards,
       ArrayList<Cards> communityCards) {
@@ -118,9 +124,11 @@ public class PokerChart {
   }
 
   /**
-   * The open straight draw is when the winning straight is only given when we
-   * 
-   * @return boolean value
+   * It checks to see if the user has the open straight draw hand.
+   *
+   * @param userCards - The users hand
+   * @param communityCards - The community cards
+   * @return T or F - True if the user has an open straight draw.
    */
   public boolean hasOpenStraightDraw(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
     ArrayList<Cards> allCards = new ArrayList<Cards>();
@@ -210,16 +218,15 @@ public class PokerChart {
 
 
     }
-
-
-
     return false;
   }
 
   /**
    * checks to see if you have a pair and then potential to have a double pair.
-   * 
-   * @return boolean value
+   *
+   * @param userCards - The users hand
+   * @param communityCards - The community cards
+   * @return T or F - True if the user has a pocket pair
    */
   public boolean hasPocketPair(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
     if (evaluator.hasPair(userCards, communityCards))
@@ -230,34 +237,37 @@ public class PokerChart {
 
   /**
    * This checks to confirm that no pair exists.
-   * 
-   * @return
+   *
+   * @param userCards - The users hand
+   * @param communityCards - The community cards
+   * @return T or F - True if the user has no pair.
    */
   public boolean hasNoPairToPair(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
-    if (!(evaluator.hasPair(userCards, communityCards)))
-      return true;
-    else
-      return false;
+    return (!(evaluator.hasPair(userCards, communityCards)));
+
   }
 
   /**
    * if it has two pairs that is likely to be a full house
-   * 
+   *
+   * @param userCards - The users hand
+   * @param communityCards - The community cards
    * @return boolean value.
    */
   public boolean hasTwoPair2House(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
-    if (evaluator.hasTwoPairs(userCards, communityCards)) {
-      return true;
-    } else
-      return false;
+    return (evaluator.hasTwoPairs(userCards, communityCards));
+
+
   }
 
 
 
   /**
    * Checks to see if it has a High card that is higher than any other card in the board.
-   * 
-   * @return boolean value.
+   *
+   * @param userCards - The users hand
+   * @param communityCards - The community cards
+   * @return T or F - True if the user has two over cards
    */
   public boolean hasTwoOverCard(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
     Cards highCard1, highCard2;
@@ -274,11 +284,10 @@ public class PokerChart {
     for (Cards card : communityCards) {
       if (card.getRank().getRankValue() > highCard1.getRank().getRankValue())
         return false;
-    }
-    for (Cards card : communityCards) {
       if (card.getRank().getRankValue() > highCard2.getRank().getRankValue())
         return false;
     }
+
 
     return true;// we check all possible cards to see if there exists a high card in our hand that
                 // is the highest.
@@ -289,8 +298,10 @@ public class PokerChart {
 
   /**
    * Checks to see if it has a High card that is higher than any other card in the board.
-   * 
-   * @return boolean value.
+   *
+   * @param userCards - The users hand
+   * @param communityCards - The community cards
+   * @return T or F - True if the user has one overcards.
    */
   public boolean hasOverCard(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
     Cards highCard;
@@ -318,18 +329,20 @@ public class PokerChart {
   }
 
   /**
-   * Checks to see if it has a royal flush
-   * 
-   * @return boolean value
+   * Checks to see if it has a royal flush. The best hand in the game.
+   *
+   * @param userCards - The users hand
+   * @param communityCards - The community cards
+   * @return T or F - True if the user has a royal flush
    */
   public boolean hasRoyalFlush(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
     return evaluator.hasRoyalFlush(userCards, communityCards);
   }
 
   /**
-   * This checks to see if your hand has cards with the same suit.
-   * 
-   * @return boolean value
+   * This checks to see if users hand has cards with the same suit.
+   *
+   * @return T or F - True if the user has flush draw hand
    */
   public boolean hasFlushDraw(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
     int sameSuitCounter = 0;

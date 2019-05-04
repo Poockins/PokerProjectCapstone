@@ -4,28 +4,36 @@ import java.util.Collections;
 import java.util.ListIterator;
 
 /**
- * This Class can evaluate a users hand effciently to determine the hand that it currently has this
- * is mainly used to support the poker chart process.
- * 
+ * This Class can evaluate a users hand efficiently to determine the hand that it currently has this
+ * is mainly used to support the poker chart process. The poker chart determines what potential
+ * users has.
+ *
  * @author Thomas
  *
  */
 public class PokerEvaluator {
 
+  // Evaluator String
   private String EvaluationStr;
-  private int handValue;
 
+
+  /**
+   * The constructor for the class.
+   */
   public PokerEvaluator() {
-    handValue = 0;
+
     EvaluationStr = "";
   }
 
 
 
   /**
-   * Checks to see if the user has a rank card which is anything above 10.
-   * 
-   * @return
+   * Checks to see if the user has a rank card which is anything above 10. A high card is ten, jack,
+   * queen, king and ace
+   *
+   * @param userCards - The users hand
+   * @param communityCards - The community cards
+   * @return T or F - True if user has high card
    */
   public boolean hasHighCard(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
     for (Cards card : userCards) {
@@ -39,9 +47,11 @@ public class PokerEvaluator {
   }
 
   /**
-   * Checks to see if you have a pair.
-   * 
-   * @return
+   * Checks to see if the user, not the community cards, has a pair.
+   *
+   * @param userCards - The users hand
+   * @param communityCards - The community cards
+   * @return T or F - True if the user has a pair
    */
   public boolean hasPair(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
     int num_OfPairs, num_OfPairs1;
@@ -92,9 +102,11 @@ public class PokerEvaluator {
   }
 
   /**
-   * Checks to see if it has a straight, but with all the same suits.
-   * 
-   * @return boolean value
+   * Checks to see if it has a straight, but with all the same suits. Known as a straight flush
+   *
+   * @param userCards - The users hand
+   * @param communityCards - The community cards
+   * @return T or F - True if the user has a straight flush
    */
   public boolean hasStraightFlush(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
 
@@ -109,8 +121,10 @@ public class PokerEvaluator {
 
   /**
    * Checks to see if the user has a full house.
-   * 
-   * @return boolean value
+   *
+   * @param userCards - The users hand
+   * @param communityCards - The community cards
+   * @return T or F - True if the user has full house
    */
   public boolean hasfullHouse(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
     if (hasThreeOfKind(userCards, communityCards) && hasPair(userCards, communityCards))
@@ -121,9 +135,11 @@ public class PokerEvaluator {
   }
 
   /**
-   * Checks to see if you have a pair.
-   * 
-   * @return boolean value
+   * Checks to see if the user has two pairs.
+   *
+   * @param userCards - The users hand
+   * @param communityCards - The community cards
+   * @return T or F - True if the user has two pair hand.
    */
   public boolean hasTwoPairs(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
     int sameKind1 = 0;
@@ -164,8 +180,10 @@ public class PokerEvaluator {
 
   /**
    * It checks to see if the user has a straight. Basically card or cards
-   * 
-   * @return boolean value
+   *
+   * @param userCards - The users hand
+   * @param communityCards - The community cards
+   * @return T or F - True if the user has has a straight.
    */
   public boolean hasStraight(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
     ArrayList<Cards> allCards = new ArrayList<Cards>();
@@ -219,9 +237,11 @@ public class PokerEvaluator {
   }
 
   /**
-   * Checks to see if it has four of a kind in the texas holden game.
-   * 
-   * @param boolean value
+   * Checks to see if it has four of a kind in the Texas holden game.
+   *
+   * @param userCards - The users hand
+   * @param communityCards - The community cards
+   * @param T or F if the user has four of a kind.
    */
   public boolean HasFourOfKind(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
     int sameKind = 0;// initialized to zero.
@@ -273,8 +293,10 @@ public class PokerEvaluator {
 
   /**
    * Checks to see if it has three of a kind.
-   * 
-   * @return boolean value
+   *
+   * @param userCards - The users hand
+   * @param communityCards - The community cards
+   * @return T or F - True if the user has three of a kind.
    */
   public boolean hasThreeOfKind(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
     int sameKind = 0;// initialized to zero.
@@ -322,8 +344,10 @@ public class PokerEvaluator {
 
   /**
    * checks to see if there are five cards with the same suit
-   * 
-   * @return boolean value
+   *
+   * @param userCards - The users hand
+   * @param communityCards - The community cards
+   * @return T or F - True if the user has a flush
    */
   public boolean hasFlush(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
     int suitCounter = 0;
@@ -386,8 +410,10 @@ public class PokerEvaluator {
 
   /**
    * Checks to see if it has a royal flush
-   * 
-   * @return boolean value
+   *
+   * @param userCards - The users hand
+   * @param communityCards - The community cards
+   * @return T or F - True if the user has a royal flush
    */
   public boolean hasRoyalFlush(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
     // boolean representation of the cards
