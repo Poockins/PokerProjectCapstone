@@ -237,7 +237,7 @@ public class PokerEvaluator {
   }
 
   /**
-   * Checks to see if it has four of a kind in the Texas holden game.
+   * Checks to see if it has four of a kind in the Texas holden game..
    *
    * @param userCards - The users hand
    * @param communityCards - The community cards

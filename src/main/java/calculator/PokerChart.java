@@ -6,7 +6,7 @@ import java.util.ListIterator;
 /**
  * This class will contain some poker odds in the form of boolean methods. The poker odds are the
  * most common that appear in the game of Texas Holdem This will determine the potential that the
- * user has.
+ * user has..
  *
  * @author Thomas
  */
