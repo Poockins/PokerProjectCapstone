@@ -1,3 +1,5 @@
+package calculator;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
@@ -109,11 +111,11 @@ class PokerChartTest {
 	    card1 = new Cards(rank1, suit1);
 	    card2 = new Cards(rank2, suit2);
 	    // community card
-	    suit3 = Suit.DIAMONDS;
+	    suit3 = Suit.CLUBS;
 	    rank3 = Rank.NINE;
 	    card3 = new Cards(rank3, suit3);
 
-	    suit4 = Suit.SPADES;
+	    suit4 = Suit.HEARTS;
 	    rank4 = Rank.QUEEN;
 	    card4 = new Cards(rank4, suit4);
 

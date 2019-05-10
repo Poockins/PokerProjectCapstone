@@ -256,8 +256,6 @@ import java.util.ListIterator;
     */
    public boolean hasTwoPair2House(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
      return (evaluator.hasTwoPairs(userCards, communityCards));
-
-
    }
 
 

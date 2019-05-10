@@ -1,5 +1,5 @@
+package calculator;
 import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.Test;
 
 class PokerEvaluatorTest {
@@ -108,7 +108,7 @@ class PokerEvaluatorTest {
 	    calcObj.addCommunityCard(card7);
 
 
-	    assertTrue(calcEval.hasfullHouse(calcObj.getUserCards(), calcObj.getCommunityCards()));
+	    assertTrue(calcEval.hasFullHouse(calcObj.getUserCards(), calcObj.getCommunityCards()));
 	  }
 
 	  @Test
@@ -375,13 +375,12 @@ class PokerEvaluatorTest {
 	    calcObj.addCommunityCard(card5);
 	    calcObj.addCommunityCard(card6);
 
-	    assertTrue(calcEval.HasFourOfKind(calcObj.getUserCards(), calcObj.getCommunityCards()));
+	    assertTrue(calcEval.hasFourOfKind(calcObj.getUserCards(), calcObj.getCommunityCards()));
 
 	  }
 
 	  @Test
 	  public void testHasRoyalFlush() {
-
 	    calcObj.resetUserHand();
 	    calcObj.resetCommunityCards();
 
@@ -395,24 +394,24 @@ class PokerEvaluatorTest {
 	    card1 = new Cards(rank1, suit1);
 	    card2 = new Cards(rank2, suit2);
 	    // comunity card
-	    suit3 = Suit.CLUBS;
-	    rank3 = Rank.KING;
+	    suit3 = Suit.DIAMONDS;
+	    rank3 = Rank.FIVE;
 	    card3 = new Cards(rank3, suit3);
 
 	    suit4 = Suit.CLUBS;
 	    rank4 = Rank.TEN;
 	    card4 = new Cards(rank4, suit4);
 
-	    suit5 = Suit.DIAMONDS;
+	    suit5 = Suit.CLUBS;
 	    rank5 = Rank.JACK;
 
 	    card5 = new Cards(rank5, suit5);
 
-	    suit6 = Suit.HEARTS;
+	    suit6 = Suit.CLUBS;
 	    rank6 = Rank.ACE;
 	    card6 = new Cards(rank6, suit6);
 
-	    suit7 = Suit.HEARTS;
+	    suit7 = Suit.CLUBS;
 	    rank7 = Rank.QUEEN;
 	    card7 = new Cards(rank7, suit7);
 
