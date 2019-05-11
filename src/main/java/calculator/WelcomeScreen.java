@@ -28,8 +28,9 @@ public class WelcomeScreen extends JFrame{
     JPanel welcomePanel = new JPanel();
     JPanel controlPanel = new JPanel();
     Container contentPane = this.getContentPane();
-    JPanel pokerCalPanel = new PokerPanel();
+    JPanel pokerCalPanel = new PokerPanel(new JPanel());
     JPanel historyPanel = new PokerHistory();
+    
     
     public WelcomeScreen(){
         setTitle("Poker Calculator");
@@ -78,21 +79,25 @@ public class WelcomeScreen extends JFrame{
         layout.putConstraint(SpringLayout.WEST, mainPanel,
                      5,
                      SpringLayout.EAST, controlPanel);
+        layout.putConstraint(SpringLayout.EAST, mainPanel,
+                     5,
+                     SpringLayout.EAST, contentPane);
         layout.putConstraint(SpringLayout.NORTH, mainPanel,
                      5,
                      SpringLayout.NORTH, controlPanel);
-        layout.putConstraint(SpringLayout.EAST, contentPane,
-                     5,
-                     SpringLayout.EAST, mainPanel);
         layout.putConstraint(SpringLayout.SOUTH, contentPane,
                      5,
                      SpringLayout.SOUTH, mainPanel);
-        pack();
-        
+        //pack();
+        validate();
         //Buttons will manipulate the viewing screen
         calculatorButton.addActionListener((ActionEvent e) -> {
+            SpringLayout mainLayout = new SpringLayout();
             mainPanel.removeAll();
             mainPanel.add(pokerCalPanel);
+            mainPanel.setLayout(mainLayout);
+            mainLayout.putConstraint(SpringLayout.WEST, pokerCalPanel, 5, SpringLayout.WEST, mainPanel);
+            mainLayout.putConstraint(SpringLayout.NORTH, pokerCalPanel, 5, SpringLayout.NORTH, mainPanel);
             repaint();
             validate();
         });
