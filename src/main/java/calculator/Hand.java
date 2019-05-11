@@ -5,11 +5,16 @@
  * @author Yuko Takegoshi
  * @version 1.0
  */
+
 package calculator;
 
+import org.hsqldb.jdbc.JDBCArray;
+
 import java.sql.SQLException;
-import java.util.*;
-import java.util.stream.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class Hand {
 
@@ -21,19 +26,19 @@ public class Hand {
   /**
    * Construct a Hand given cards and a player
    *
-   * @param cards the cards for the hand
+   * @param cards  the cards for the hand
    * @param player the player for the hand
    */
   public Hand(Cards[] cards, Player player) {
     try {
       DBConnection db = new DBConnection();
       String query = "INSERT INTO hands (cards, player_id) VALUES (?, ?)";
-      String cardParam = String.format("ARRAY[%s]", Cards.arrayToString(cards));
-      List<Map<String, Object>> results = db.insertQuery(query, cardParam, this.player.getId());
+      String[] cardParam = Cards.toStringArray(cards);
+      List<Map<String, Object>> results = db.insertQuery(query, cardParam, player.getId());
       Map<String, Object> row = results.get(0);
       this.cards = cards;
       this.player = player;
-      this.id = (Integer)row.get("id");
+      this.id = (Integer) row.get("ID");
     } catch (SQLException ex) {
       ex.printStackTrace();
     }
@@ -41,9 +46,6 @@ public class Hand {
 
   /**
    * Construct a Hand given database information
-   * @param cards
-   * @param player
-   * @param id
    */
   public Hand(Cards[] cards, Player player, Game game, int id) {
     this.cards = cards;
@@ -54,29 +56,31 @@ public class Hand {
 
   /**
    * Construct a Hand given params from the database
-   *
-   * @param params
    */
   public Hand(Map<String, Object> params) {
-    String[] cardStrings = (String[])params.get("cards");
-    this.cards = Cards.stringToArray(cardStrings);
-    int playerId = (Integer)params.get("player_id");
-    this.player = Player.findById(playerId);
-    int gameId = (Integer)params.get("game_id");
-    this.game = Game.findById(gameId);
-    this.id = (Integer)params.get("id");
+    JDBCArray cards = (JDBCArray) params.get("cards");
+    try {
+      Object[] cardObjects = (Object[]) cards.getArray();
+      String[] cardStrings = Arrays.stream(cardObjects)
+          .toArray(String[]::new);
+      this.cards = Cards.stringToArray(cardStrings);
+      int playerId = (Integer) params.get("PLAYER_ID");
+      this.player = Player.findById(playerId);
+      int gameId = (Integer) params.get("GAME_ID");
+      this.game = Game.findById(gameId);
+      this.id = (Integer) params.get("ID");
+    } catch (SQLException ex) {
+      ex.printStackTrace();
+    }
   }
+
   /**
-   * This hand constructor was used in testing can be removed once final build
-   * is solidified 
-   * @param card1
-   * @param card2
-   * @param player 
+   * This hand constructor was used in testing can be removed once final build is solidified
    */
-  public Hand(Cards card1, Cards card2, Player player){
-      Cards [] cards = {card1, card2};
-      this.cards= cards;
-      this.player = player;
+  public Hand(Cards card1, Cards card2, Player player) {
+    Cards[] cards = {card1, card2};
+    this.cards = cards;
+    this.player = player;
   }
 
   /**
@@ -90,8 +94,6 @@ public class Hand {
 
   /**
    * Sets the cards for the Hand
-   *
-   * @param cards
    */
   public void setCards(Cards[] cards) {
     this.cards = cards;
@@ -108,8 +110,6 @@ public class Hand {
 
   /**
    * Sets the player for the Hand
-   *
-   * @param player
    */
   public void setPlayer(Player player) {
     this.player = player;
@@ -117,10 +117,19 @@ public class Hand {
 
   /**
    * Gets the database id for the Hand
+   *
    * @return database id
    */
   public int getId() {
     return id;
+  }
+
+  public Game getGame() {
+    return this.game;
+  }
+
+  public void setGame(Game game) {
+    this.game = game;
   }
 
   /**
@@ -159,7 +168,8 @@ public class Hand {
 
     try {
       DBConnection db = new DBConnection();
-      updated = db.updateQuery("UPDATE hands SET player_id = ?, cards = ?, game_id=?, WHERE id = ?", player.getId(), Cards.arrayToString(this.cards), game.getId(), this.id);
+      updated = db.updateQuery("UPDATE hands SET player_id = ?, cards = ?, game_id=? WHERE id = ?",
+          player.getId(), Cards.toStringArray(this.cards), game.getId(), this.id);
       if (updated > 0) {
         status = true;
       }
@@ -177,7 +187,7 @@ public class Hand {
   }
 
   public String toString() {
-      String handString = player + " has a " + cards[0].toString() + " and " + cards[1].toString();
+    String handString = player + " has a " + cards[0].toString() + " and " + cards[1].toString();
     return handString;
   }
 }

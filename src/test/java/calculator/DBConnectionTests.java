@@ -1,18 +1,19 @@
 package calculator;
 
-import org.junit.jupiter.api.*;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.apache.commons.dbutils.DbUtils;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Connection;
-
 import java.util.List;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DBConnectionTests {
 
@@ -28,7 +29,8 @@ class DBConnectionTests {
       db.dropAllTables();
       db.setup();
       conn = db.getConnection();
-      statement = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+      statement = conn
+          .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
     } catch (SQLException ex) {
       ex.printStackTrace();
     }
@@ -60,7 +62,7 @@ class DBConnectionTests {
       List<Map<String, Object>> result = db.selectQuery(
           "SELECT COUNT(TABLE_NAME) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PUBLIC'");
       Map<String, Object> row = result.get(0);
-      assertEquals(3, (int)(long)row.get("C1"));
+      assertEquals(3, (int) (long) row.get("C1"));
     } catch (SQLException ex) {
       ex.printStackTrace();
     }

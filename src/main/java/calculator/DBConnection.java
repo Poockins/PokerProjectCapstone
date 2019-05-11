@@ -7,12 +7,14 @@
 
 package calculator;
 
-import java.sql.*;
-import java.util.List;
-import java.util.Map;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapListHandler;
 import org.hsqldb.jdbc.JDBCDataSource;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
 public class DBConnection {
 
@@ -48,7 +50,6 @@ public class DBConnection {
    * Initializes a database and table structure if they do not yet exist
    *
    * @return Nothing
-   * @throws SQLException
    */
   public void setup() throws SQLException {
     createGamesTable();
@@ -60,7 +61,6 @@ public class DBConnection {
    * Empties all data in the database
    *
    * @return Nothing
-   * @throws SQLException
    */
   public void reset() throws SQLException {
     runner.execute("TRUNCATE SCHEMA PUBLIC RESTART IDENTITY AND COMMIT NO CHECK");
@@ -75,7 +75,6 @@ public class DBConnection {
    *
    * @param query SELECT query to run
    * @return the results from the query as a list of maps
-   * @throws SQLException
    */
   public List<Map<String, Object>> selectQuery(String query, Object... params) throws SQLException {
     List<Map<String, Object>> results = runner.query(query, handler, params);
@@ -86,10 +85,9 @@ public class DBConnection {
   /**
    * Wraps a CREATE, DROP, or UPDATE SQL command
    *
-   * @param query SQL query to run
+   * @param query  SQL query to run
    * @param params any replacement parameters
    * @return number of rows updated
-   * @throws SQLException
    */
   public int updateQuery(String query, Object... params) throws SQLException {
     int result = runner.update(query, params);
@@ -100,10 +98,9 @@ public class DBConnection {
   /**
    * Wraps an INSERT SQL query
    *
-   * @param query INSERT query to run
+   * @param query  INSERT query to run
    * @param params Replacement parameters for query
    * @return List containing map of auto-generated keys
-   * @throws SQLException
    */
   public List<Map<String, Object>> insertQuery(String query, Object... params) throws SQLException {
     List<Map<String, Object>> results = runner.insert(query, handler, params);

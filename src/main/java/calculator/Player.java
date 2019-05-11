@@ -5,12 +5,13 @@
  * @author Yuko Takegoshi
  * @version 1.0
  */
+
 package calculator;
 
 import java.sql.SQLException;
-import java.util.Map;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class Player {
 
@@ -18,27 +19,19 @@ public class Player {
   private int id;
 
   /**
-   * Constructor to create a new database record
+   * Constructor to create a player with a name.
    *
    * @param name player name
    */
   public Player(String name) {
-    try {
-      DBConnection db = new DBConnection();
-      List<Map<String, Object>> results = db.insertQuery("INSERT INTO players (name) VALUES (?)", name);
-      Map<String, Object> row = results.get(0);
-      this.name = name;
-      this.id = (Integer)row.get("id");
-    } catch (SQLException ex) {
-      ex.printStackTrace();
-    }
+    this.name = name;
   }
 
   /**
-   * Constructor given database id and name
-   * Assumes that the record already exists as given in the database
+   * Constructor given database id and name.
+   * Assumes that the record already exists as given in the database.
    *
-   * @param id Primary key database id of player
+   * @param id   Primary key database id of player
    * @param name Player name
    */
   public Player(int id, String name) {
@@ -48,12 +41,10 @@ public class Player {
 
   /**
    * Constructor from map from database
-   *
-   * @param params
    */
   public Player(Map<String, Object> params) {
-    this.id = (Integer)params.get("id");
-    this.name = (String)params.get("name");
+    this.id = (Integer) params.get("id");
+    this.name = (String) params.get("name");
   }
 
   /**
@@ -103,11 +94,35 @@ public class Player {
   }
 
   /**
-   * Saves the Player to the database
+   * Creates a new Player recprd in the database
    *
    * @return status indicating whether save was successful
    */
   public boolean save() {
+    boolean status = false;
+    try {
+      DBConnection db = new DBConnection();
+      List<Map<String, Object>> results = db.insertQuery("INSERT INTO players (name) VALUES (?)", name);
+      Map<String, Object> row = results.get(0);
+      Integer id = (Integer)row.get("id");
+      if (id > 0) {
+        status = true;
+        this.id = id;
+      }
+    } catch (SQLException ex) {
+      ex.printStackTrace();
+    }
+
+    return status;
+  }
+
+
+  /**
+   * Updates Player data in the database
+   *
+   * @return status indicating whether save was successful
+   */
+  public boolean update() {
     boolean status = false;
     int updated;
     try {

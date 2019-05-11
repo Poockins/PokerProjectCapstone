@@ -1,14 +1,13 @@
 /**
- * Card class to represent a single card in a hand
+ * Card class to represent a single card in a hand.
+ *
+ * @author Rob
+ * @author Yuko Takegoshi
  */
+
 package calculator;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Cards implements Comparable<Cards> {
@@ -21,7 +20,7 @@ public class Cards implements Comparable<Cards> {
     this.suit = suit;
   }
 
-  private final static Map<String, Cards> CARD_CONTAINER = initContainer();
+  private static final Map<String, Cards> CARD_CONTAINER = initContainer();
 
   private static Map<String, Cards> initContainer() {
     final Map<String, Cards> container = new HashMap<>();
@@ -58,8 +57,9 @@ public class Cards implements Comparable<Cards> {
 
     return converted.toArray(new Cards[converted.size()]);
   }
+
   /**
-   * Creates a Card from a database formatted string
+   * Creates a Card from a database formatted string.
    *
    * @param data String representation of the card
    * @return Card created from database string
@@ -72,17 +72,17 @@ public class Cards implements Comparable<Cards> {
   }
 
   /**
-   * Used for storing cards in the database as strings
+   * Used for storing cards in the database as strings.
    *
    * @return database friendly string representation of the card
    */
   public String toDataString() {
-    return String.format("%s::%s", this.rank, this.suit);
+    return String.format("%s::%s", this.rank.name(), this.suit.name());
   }
 
   @Override
   public String toString() {
-    return String.format("%s of %s", this.rank, this.suit);
+    return String.format("%s of %s", this.rank.name(), this.suit.name());
   }
 
   @Override
@@ -93,15 +93,24 @@ public class Cards implements Comparable<Cards> {
   }
 
   /**
-   * Converts an array of cards to a comma delimited string representation
+   * Converts an array of cards to a comma delimited string representation.
    *
    * @param cards card to convert to string
    * @return comma delimited string of card
    */
   public static String arrayToString(Cards[] cards) {
-    List<Cards> CardsList = Arrays.asList(cards);
+    List<Cards> cardsList = Arrays.asList(cards);
     return String
-        .join(",", CardsList.stream().map(c -> c.toDataString()).collect(Collectors.toList()));
+        .join(",", cardsList.stream().map(c ->  "'" + c.toDataString() + "'").collect(Collectors.toList()));
+  }
+
+  public static String[] toStringArray(Cards[] cards) {
+    String[] result = new String[cards.length];
+    for (int i = 0; i < cards.length; i++) {
+      result[i] = cards[i].toDataString();
+    }
+
+    return result;
   }
 
   private static String cardName(final Rank rank, final Suit suit) {

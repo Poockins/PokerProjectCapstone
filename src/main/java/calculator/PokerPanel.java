@@ -1,18 +1,23 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * PokerPanel is the main panel displaying the poker table with its players and hands
+ *
+ * @author elich
+ * @author Yuko Takegoshi
  */
+
 package calculator;
 
+import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -25,473 +30,362 @@ import javax.swing.SpringLayout;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
-/**
- *
- * @author elich
- */
+public class PokerPanel extends JPanel {
 
+  HashMap<Integer, Player> players = new HashMap<>();
 
-public class PokerPanel extends JPanel{
-    //
-    ArrayList<Player> players = new ArrayList();
-    ArrayList<JButton> invisButtons = new ArrayList();
-    ArrayList<JButton> addPlayersButtons = new ArrayList();
-    ArrayList<JButton> removePlayersButtons = new ArrayList();
-    ArrayList<Hand> hands = new ArrayList();
-    Rank [] cardValue = {Rank.TWO,Rank.THREE,Rank.FOUR,Rank.FIVE,Rank.SIX,Rank.SEVEN,Rank.EIGHT,Rank.NINE,Rank.TEN,Rank.JACK,Rank.QUEEN,Rank.KING,Rank.ACE};
-    Suit [] suitValue = {Suit.HEARTS,Suit.CLUBS,Suit.DIAMONDS,Suit.SPADES};
-    
-    JPanel pokerTable = new JPanel();
-    JPanel historyPanel = new PokerHistory(); 
-    String numberOfPlayers = "";
-    int numPlayers = 2;
-    
-    //
-    //Border used for various components
-    Border blackline = BorderFactory.createLineBorder(Color.black);
-    
-    public PokerPanel(JPanel contentPanel){
-        SpringLayout layout = new SpringLayout();
-        contentPanel.setLayout(layout);
-        pokerTable.setLayout(new GridBagLayout());
-        pokerTable.setBorder(blackline);        
-        GridBagConstraints tableConstraints = new GridBagConstraints();
-        //Poker Table Components
-        //Flop Card1
-        JLabel flopLabel = new JLabel("Flop");
-        JComboBox flop1Value = new JComboBox(cardValue);
-        JComboBox flop1Suit = new JComboBox(suitValue);
-        //Flop Card2
-        JComboBox flop2Value = new JComboBox(cardValue);
-        JComboBox flop2Suit = new JComboBox(suitValue);
-        //Flop Card3
-        JComboBox flop3Value = new JComboBox(cardValue);
-        JComboBox flop3Suit = new JComboBox(suitValue);
-        //River
-        JLabel riverLabel = new JLabel("River");
-        JComboBox riverValue = new JComboBox(cardValue);
-        JComboBox riverSuit = new JComboBox(suitValue);
-        //Turn
-        JLabel turnLabel = new JLabel("Turn");
-        JComboBox turnValue = new JComboBox(cardValue);
-        JComboBox turnSuit = new JComboBox(suitValue);
-        
-        //The poker Table adds in its components and are laid out using gridbag 
-        //
-        tableConstraints.gridx = 0;
-        tableConstraints.gridy = 0;
-        tableConstraints.insets = new Insets(2,1,1,1);
-        pokerTable.add(flopLabel,tableConstraints);
-        tableConstraints.gridy = 1;
-        pokerTable.add(flop1Value,tableConstraints);
-        tableConstraints.gridx=1;
-        pokerTable.add(flop1Suit,tableConstraints);
-        tableConstraints.gridx = 2;
-        pokerTable.add(flop2Value,tableConstraints);
-        tableConstraints.gridx = 3;
-        pokerTable.add(flop2Suit,tableConstraints);
-        tableConstraints.gridx = 4;
-        pokerTable.add(flop3Value,tableConstraints);
-        tableConstraints.gridx = 5;
-        pokerTable.add(flop3Suit,tableConstraints);
-        //Start of the river
-        tableConstraints.gridy=2;
-        tableConstraints.gridx = 0;
-        pokerTable.add(riverLabel,tableConstraints);
-        tableConstraints.gridy=3;
-        pokerTable.add(riverValue,tableConstraints);
-        tableConstraints.gridx = 1;
-        pokerTable.add(riverSuit,tableConstraints);
-        //Start of the turn
-        tableConstraints.gridy=2;
-        tableConstraints.gridx=2;
-        pokerTable.add(turnLabel,tableConstraints);
-        tableConstraints.gridy=3;
-        pokerTable.add(turnValue,tableConstraints);
-        tableConstraints.gridx=3;
-        pokerTable.add(turnSuit,tableConstraints);
-        
-        /**
-        *Panels for players
-        *Each player has their own panel that is on the screen. Table starts 
-        *out with 2 players and selecting the number indicator establishes the 
-        *the new number
-        **/
-        JPanel player1Panel = new JPanel();
-        TitledBorder player1Title = BorderFactory.createTitledBorder(blackline, "Player 1");
-        player1Title.setTitleJustification(TitledBorder.LEFT);
-        player1Panel.setBorder(player1Title);
-        player1Panel.setPreferredSize(new Dimension(pokerTable.getPreferredSize().width/3,pokerTable.getPreferredSize().height));
-        JButton addPlayer1 = new JButton("Add");
-        JButton removePlayer1 = new JButton("Remove");
-        addPlayersButtons.add(addPlayer1);
-        removePlayersButtons.add(removePlayer1);
-        repaint();
+  JPanel[] playerPanels = new JPanel[8];
+  JPanel[] playerCardPanels = new JPanel[8];
 
-        JPanel player2Panel = new JPanel();
-        TitledBorder player2Title = BorderFactory.createTitledBorder(blackline, "Player2");
-        player2Title.setTitleJustification(TitledBorder.LEFT);
-        player2Panel.setBorder(player2Title);
-        player2Panel.setPreferredSize(new Dimension(pokerTable.getPreferredSize().width/3,pokerTable.getPreferredSize().height));
-        JButton addPlayer2 = new JButton("Add");
-        JButton removePlayer2 = new JButton("Remove");
-        addPlayersButtons.add(addPlayer2);
-        removePlayersButtons.add(removePlayer2);
-        repaint();
+  //  ArrayList<Hand> hands = new ArrayList();
+  Rank[] cardValue = Rank.values();
+  Suit[] suitValue = Suit.values();
 
-        JPanel player3Panel = new JPanel();
-        TitledBorder player3Title = BorderFactory.createTitledBorder(blackline, "Player3");
-        player3Title.setTitleJustification(TitledBorder.LEFT);
-        player3Panel.setBorder(player3Title);
-        player3Panel.setPreferredSize(new Dimension(pokerTable.getPreferredSize().width/3,pokerTable.getPreferredSize().height));
-        JButton addPlayer3 = new JButton("Add");
-        JButton removePlayer3 = new JButton("Remove");
-        addPlayersButtons.add(addPlayer3);
-        removePlayersButtons.add(removePlayer3);
-        repaint();
-        
-        JPanel player4Panel = new JPanel();
-        TitledBorder player4Title = BorderFactory.createTitledBorder(blackline, "Player4");
-        player4Title.setTitleJustification(TitledBorder.LEFT);
-        player4Panel.setBorder(player4Title);
-        player4Panel.setPreferredSize(new Dimension(pokerTable.getPreferredSize().width/3,pokerTable.getPreferredSize().height));
-        JButton addPlayer4 = new JButton("Add");
-        JButton removePlayer4 = new JButton("Remove");
-        addPlayersButtons.add(addPlayer4);
-        removePlayersButtons.add(removePlayer4);
-        repaint();
+  ArrayList<HashMap<String, JComboBox>> tableCardComponents = new ArrayList<>();
+  HashMap<Integer, ArrayList<JPanel>> playerCardComponents = new HashMap<>();
+  JPanel pokerTable = new JPanel();
 
-        JPanel player5Panel = new JPanel();
-        TitledBorder player5Title = BorderFactory.createTitledBorder(blackline, "Player5");
-        player5Title.setTitleJustification(TitledBorder.LEFT);
-        player5Panel.setBorder(player5Title);
-        player5Panel.setPreferredSize(new Dimension(pokerTable.getPreferredSize().width/3,pokerTable.getPreferredSize().height));
-        JButton addPlayer5 = new JButton("Add");
-        JButton removePlayer5 = new JButton("Remove");
-        addPlayersButtons.add(addPlayer5);
-        removePlayersButtons.add(removePlayer5);
-        repaint();
+  //Border used for various components
+  Border blackline = BorderFactory.createLineBorder(Color.black);
 
-        JPanel player6Panel = new JPanel();
-        TitledBorder player6Title = BorderFactory.createTitledBorder(blackline, "Player6");
-        player6Title.setTitleJustification(TitledBorder.LEFT);
-        player6Panel.setBorder(player6Title);
-        player6Panel.setPreferredSize(new Dimension(pokerTable.getPreferredSize().width/3,pokerTable.getPreferredSize().height));
-        JButton addPlayer6 = new JButton("Add");
-        JButton removePlayer6 = new JButton("Remove");
-        addPlayersButtons.add(addPlayer6);
-        removePlayersButtons.add(removePlayer6);
-        repaint();
+  public PokerPanel(JPanel contentPanel) {
+    SpringLayout layout = new SpringLayout();
+    contentPanel.setLayout(layout);
+    pokerTable.setLayout(new GridBagLayout());
+    pokerTable.setBorder(blackline);
 
-        JPanel player7Panel = new JPanel();
-        TitledBorder player7Title = BorderFactory.createTitledBorder(blackline, "Player7");
-        player7Title.setTitleJustification(TitledBorder.LEFT);
-        player7Panel.setBorder(player7Title);
-        player7Panel.setPreferredSize(new Dimension(pokerTable.getPreferredSize().width/3,pokerTable.getPreferredSize().height));
-        JButton addPlayer7 = new JButton("Add");
-        JButton removePlayer7 = new JButton("Remove");
-        addPlayersButtons.add(addPlayer7);
-        removePlayersButtons.add(removePlayer7);
-        repaint();
-        
-        JPanel player8Panel = new JPanel();
-        TitledBorder player8Title = BorderFactory.createTitledBorder(blackline, "Player8");
-        player8Title.setTitleJustification(TitledBorder.LEFT);
-        player8Panel.setBorder(player8Title);
-        player8Panel.setPreferredSize(new Dimension(pokerTable.getPreferredSize().width/3,pokerTable.getPreferredSize().height));
-        JButton addPlayer8 = new JButton("Add");
-        JButton removePlayer8 = new JButton("Remove");
-        addPlayersButtons.add(addPlayer8);
-        removePlayersButtons.add(removePlayer8);
-        repaint();
-        
-        
-        //Calculation Panel
-        String odds = "", cardsNeeded= "";
-        String [][] dataRow = {{odds, cardsNeeded},{"",""}};
-        String [] columnNames = {"Odds","Cards"};
-        JPanel calcPanel = new JPanel();
-        calcPanel.setBorder(blackline);
-        JTable calcTable = new JTable(dataRow, columnNames);  
-        int tableWidth = calcPanel.getWidth();
-        int tableHeight = calcPanel.getHeight();
-        calcTable.setPreferredScrollableViewportSize(calcTable.getPreferredSize());
-        calcTable.setSize(tableWidth, tableHeight);
-        calcPanel.setBounds(0, 0, 50, 50);
-        JScrollPane sp = new JScrollPane(calcTable);
-        
-        calcPanel.add(sp);    
-        
-        
-        //Number of Player Panel
-        JPanel numPlayerPanel = new JPanel();
-        numPlayerPanel.setBorder(blackline);
-        String [] numPlayerList = {"2","3","4","5","6","7","8"};
-        JLabel playerLabel = new JLabel("Number of Players");
-        JComboBox playerBox = new JComboBox(numPlayerList);
-        numPlayerPanel.add(playerLabel);
-        numPlayerPanel.add(playerBox);
-        
-        
-        //Misc. Components
-        JPanel miscPanel = new JPanel();
-        miscPanel.setLayout(new BoxLayout(miscPanel, BoxLayout.Y_AXIS));
-        JButton databaseButton = new JButton("Save to Database");
-        JButton clearButton = new JButton("Clear Form");
-        miscPanel.add(clearButton);
-        miscPanel.add(databaseButton);
-        
-        contentPanel.add(numPlayerPanel);
-        contentPanel.add(player1Panel);
-        contentPanel.add(player2Panel);
-        contentPanel.add(player3Panel);
-        contentPanel.add(player4Panel);
-        contentPanel.add(player5Panel);
-        contentPanel.add(player6Panel);
-        contentPanel.add(player7Panel);
-        contentPanel.add(player8Panel);
-        contentPanel.add(pokerTable);
-        contentPanel.add(calcPanel);
-        contentPanel.add(miscPanel);
-        ///setContent(contentPanel);
-        
-        
-        //Layout Management Constraints
-        layout.putConstraint(SpringLayout.NORTH, numPlayerPanel, 5, SpringLayout.NORTH, contentPanel);
-        layout.putConstraint(SpringLayout.WEST, numPlayerPanel, 5, SpringLayout.WEST, player2Panel);
-        
-        layout.putConstraint(SpringLayout.NORTH, player1Panel, 5, SpringLayout.SOUTH, numPlayerPanel);
-        
-        layout.putConstraint(SpringLayout.WEST, player1Panel, 0, SpringLayout.WEST, pokerTable);
-        
-        layout.putConstraint(SpringLayout.NORTH, player2Panel, 5, SpringLayout.SOUTH, numPlayerPanel);
-        layout.putConstraint(SpringLayout.WEST, player2Panel, 5, SpringLayout.EAST, player1Panel);
-        
-        layout.putConstraint(SpringLayout.NORTH, player3Panel, 5, SpringLayout.SOUTH, numPlayerPanel);
-        layout.putConstraint(SpringLayout.EAST, player3Panel, 5, SpringLayout.EAST, pokerTable);
-        layout.putConstraint(SpringLayout.WEST, player3Panel, 5, SpringLayout.EAST, player2Panel);
-        
-        layout.putConstraint(SpringLayout.WEST, player4Panel, 5, SpringLayout.WEST, contentPanel);
-        layout.putConstraint(SpringLayout.NORTH, player4Panel,5, SpringLayout.SOUTH, player1Panel);
-        
-        layout.putConstraint(SpringLayout.WEST, pokerTable, 5, SpringLayout.EAST, player4Panel);
-        layout.putConstraint(SpringLayout.NORTH, pokerTable, 5, SpringLayout.SOUTH, player1Panel);
-        
-        layout.putConstraint(SpringLayout.WEST, player5Panel, 5, SpringLayout.EAST, pokerTable);
-        layout.putConstraint(SpringLayout.NORTH, player5Panel, 5, SpringLayout.SOUTH, player1Panel);
-        
-        layout.putConstraint(SpringLayout.WEST, calcPanel, 5, SpringLayout.WEST, contentPanel);
-        layout.putConstraint(SpringLayout.NORTH, calcPanel, 5, SpringLayout.SOUTH, pokerTable);
-        
-        layout.putConstraint(SpringLayout.WEST, player6Panel, 0, SpringLayout.WEST, pokerTable);
-        layout.putConstraint(SpringLayout.NORTH, player6Panel,5, SpringLayout.SOUTH, pokerTable);
-        
-        layout.putConstraint(SpringLayout.WEST, player7Panel, 5, SpringLayout.EAST, player6Panel);
-        layout.putConstraint(SpringLayout.NORTH, player7Panel, 5, SpringLayout.SOUTH, pokerTable);
-        
-        layout.putConstraint(SpringLayout.WEST, player8Panel, 5, SpringLayout.EAST, player7Panel);
-        layout.putConstraint(SpringLayout.EAST, player8Panel, 5, SpringLayout.EAST, pokerTable);
-        layout.putConstraint(SpringLayout.NORTH, player8Panel,5, SpringLayout.SOUTH, pokerTable);
-        
-        layout.putConstraint(SpringLayout.WEST, miscPanel, 5, SpringLayout.EAST, player8Panel);
-        layout.putConstraint(SpringLayout.NORTH, miscPanel, 5, SpringLayout.SOUTH, pokerTable);
-        
-        layout.putConstraint(SpringLayout.EAST, contentPanel, 5, SpringLayout.EAST, player5Panel);
-        layout.putConstraint(SpringLayout.SOUTH, contentPanel, 5, SpringLayout.SOUTH, player7Panel);
-        //intializes the number of players in the calculator
-        playerBox.setSelectedIndex(0);
-        numberOfPlayers = playerBox.getSelectedItem().toString();
-        numPlayers = Integer.parseInt(numberOfPlayers);
-        
-        
-        
-        //Button Controls
-        //The addPlayer# buttons all will replaces the contents of their panel 
-        //with the new contents of the the player factory
-        addPlayer1.addActionListener((ActionEvent e) -> {
-            player1Panel.removeAll();
-            player1Panel.add(playerPanelFactory("Player1",1));
-            repaint();
-            validate();
-        });
-        addPlayer2.addActionListener((ActionEvent e) -> {
-            player2Panel.removeAll();
-            player2Panel.add(playerPanelFactory("Player2",2));
-            repaint();
-            validate();
-        });
-        addPlayer3.addActionListener((ActionEvent e) -> {
-            player3Panel.removeAll();
-            player3Panel.add(playerPanelFactory("Player3",3));
-            repaint();
-            validate();
-        });
-        addPlayer4.addActionListener((ActionEvent e) -> {
-            player4Panel.removeAll();
-            player4Panel.add(playerPanelFactory("Player4",4));
-            repaint();
-            validate();
-        });
-        addPlayer5.addActionListener((ActionEvent e) -> {
-            player5Panel.removeAll();
-            player5Panel.add(playerPanelFactory("Player5",5));
-            repaint();
-            validate();
-        });
-        addPlayer6.addActionListener((ActionEvent e) -> {
-            player6Panel.removeAll();
-            player6Panel.add(playerPanelFactory("Player6",6));
-            repaint();
-            validate();
-        });
-        addPlayer7.addActionListener((ActionEvent e) -> {
-            player7Panel.removeAll();
-            player7Panel.add(playerPanelFactory("Player7",7));
-            repaint();
-            validate();
-        });
-        addPlayer8.addActionListener((ActionEvent e) -> {
-            player8Panel.removeAll();
-            player8Panel.add(playerPanelFactory("Player8",8));
-            repaint();
-            validate();
-        });
-        removePlayer1.addActionListener((ActionEvent e) -> {
-            player1Panel.removeAll();
-            repaint();
-            revalidate();
-        });
-        removePlayer2.addActionListener((ActionEvent e) -> {
-            player2Panel.removeAll();
-            repaint();
-            revalidate();
-        });
-        removePlayer3.addActionListener((ActionEvent e) -> {
-            player3Panel.removeAll();
-            repaint();
-            revalidate();
-        });
-        removePlayer4.addActionListener((ActionEvent e) -> {
-            player4Panel.removeAll();
-            repaint();
-            revalidate();
-        });
-        removePlayer5.addActionListener((ActionEvent e) -> {
-            player5Panel.removeAll();
-            repaint();
-            revalidate();
-        });
-        removePlayer6.addActionListener((ActionEvent e) -> {
-            player6Panel.removeAll();
-            repaint();
-            revalidate();
-        });
-        removePlayer7.addActionListener((ActionEvent e) -> {
-            player7Panel.removeAll();
-            repaint();
-            revalidate();
-        });
-        removePlayer8.addActionListener((ActionEvent e) -> {
-            player8Panel.removeAll();
-            repaint();
-            revalidate();
-        });
-        databaseButton.addActionListener((ActionEvent e) -> {
-            Cards flop1 = new Cards((Rank)flop1Value.getSelectedItem(), (Suit)flop1Suit.getSelectedItem());
-            Cards flop2 = new Cards((Rank)flop2Value.getSelectedItem(), (Suit)flop2Suit.getSelectedItem());
-            Cards flop3 = new Cards((Rank)flop3Value.getSelectedItem(), (Suit)flop3Suit.getSelectedItem());
-            Cards river = new Cards((Rank)riverValue.getSelectedItem(), (Suit)riverSuit.getSelectedItem());
-            Cards turn = new Cards((Rank)turnValue.getSelectedItem(), (Suit)turnSuit.getSelectedItem());
-            Cards [] flop = {flop1, flop2, flop3};
-            makeDiaryEntry(flop,river,turn);
-        });
-        addPlayers(0,2);
-        
-        playerBox.addActionListener((ActionEvent e)-> {
-            numPlayers = Integer.parseInt(playerBox.getSelectedItem().toString());            
-            int newNumber = numPlayers;
-            if(newNumber>players.size()){
-                addPlayers(players.size(),newNumber);
-            }else if(newNumber<players.size()){
-                removePlayers(players.size(),newNumber);
-            }
-            contentPanel.revalidate();
-        });
-        
-        add(contentPanel);
-        repaint();
-        validate();
+    setupCommunal();
+
+    /**
+     *Panels for players
+     *Each player has their own panel that is on the screen. Table starts
+     *out with 2 players and selecting the number indicator establishes the
+     *the new number
+     **/
+
+    for (int i = 0; i < 8; i++) {
+      JPanel playerPanel = new JPanel(new CardLayout());
+      String playerName = String.format("Player %d", i + 1);
+      TitledBorder playerTitle = BorderFactory
+          .createTitledBorder(blackline, playerName);
+      playerTitle.setTitleJustification(TitledBorder.LEFT);
+      playerPanel.setBorder(playerTitle);
+      playerPanel.setPreferredSize(new Dimension(pokerTable.getPreferredSize().width / 3,
+          pokerTable.getPreferredSize().height));
+      playerPanel.setName(String.format("%d_player_panel", i));
+      JPanel emptyPanel = emptyPanel(i);
+      JPanel cardPanel = playerCardPanel(i);
+      playerPanel.add(emptyPanel, "empty");
+      playerPanel.add(cardPanel, "cards");
+
+      playerPanels[i] = playerPanel;
+
+      repaint();
     }
-    //Method used to create a diary of the table
-    void makeDiaryEntry(Cards [] flop, Cards turn, Cards river){
-        Hand[] arrayHands = new Hand[hands.size()];        
-        for(int i = 0;i<hands.size();i++){
-            arrayHands[i] = hands.get(i);
+
+    //Calculation Panel
+    String odds = "", cardsNeeded = "";
+    String[][] dataRow = {{odds, cardsNeeded}, {"", ""}};
+    String[] columnNames = {"Odds", "Cards"};
+    JPanel calcPanel = new JPanel();
+    calcPanel.setBorder(blackline);
+    JTable calcTable = new JTable(dataRow, columnNames);
+    int tableWidth = calcPanel.getWidth();
+    int tableHeight = calcPanel.getHeight();
+    calcTable.setPreferredScrollableViewportSize(calcTable.getPreferredSize());
+    calcTable.setSize(tableWidth, tableHeight);
+    calcPanel.setBounds(0, 0, 50, 50);
+    JScrollPane sp = new JScrollPane(calcTable);
+
+    calcPanel.add(sp);
+
+    //Misc. Components
+    JPanel miscPanel = new JPanel();
+    miscPanel.setLayout(new BoxLayout(miscPanel, BoxLayout.Y_AXIS));
+    JButton databaseButton = new JButton("Save to Database");
+    JButton clearButton = new JButton("Clear Form");
+    miscPanel.add(clearButton);
+    miscPanel.add(databaseButton);
+
+    for (int i = 0; i < 8; i++) {
+      contentPanel.add(playerPanels[i]);
+    }
+
+    contentPanel.add(pokerTable);
+    contentPanel.add(calcPanel);
+    contentPanel.add(miscPanel);
+
+    layout.putConstraint(SpringLayout.WEST, playerPanels[0], 0, SpringLayout.WEST, pokerTable);
+
+    layout.putConstraint(SpringLayout.WEST, playerPanels[1], 5, SpringLayout.EAST,
+        playerPanels[0]);
+
+    layout.putConstraint(SpringLayout.EAST, playerPanels[2], 5, SpringLayout.EAST, pokerTable);
+    layout.putConstraint(SpringLayout.WEST, playerPanels[2], 5, SpringLayout.EAST,
+        playerPanels[1]);
+
+    layout
+        .putConstraint(SpringLayout.WEST, playerPanels[3], 5, SpringLayout.WEST, contentPanel);
+    layout.putConstraint(SpringLayout.NORTH, playerPanels[3], 5, SpringLayout.SOUTH,
+        playerPanels[0]);
+
+    layout.putConstraint(SpringLayout.WEST, pokerTable, 5, SpringLayout.EAST, playerPanels[3]);
+    layout
+        .putConstraint(SpringLayout.NORTH, pokerTable, 5, SpringLayout.SOUTH, playerPanels[0]);
+
+    layout.putConstraint(SpringLayout.WEST, playerPanels[4], 5, SpringLayout.EAST, pokerTable);
+    layout.putConstraint(SpringLayout.NORTH, playerPanels[4], 5, SpringLayout.SOUTH,
+        playerPanels[0]);
+
+    layout.putConstraint(SpringLayout.WEST, calcPanel, 5, SpringLayout.WEST, contentPanel);
+    layout.putConstraint(SpringLayout.NORTH, calcPanel, 5, SpringLayout.SOUTH, pokerTable);
+
+    layout.putConstraint(SpringLayout.WEST, playerPanels[5], 0, SpringLayout.WEST, pokerTable);
+    layout
+        .putConstraint(SpringLayout.NORTH, playerPanels[5], 5, SpringLayout.SOUTH, pokerTable);
+
+    layout.putConstraint(SpringLayout.WEST, playerPanels[6], 5, SpringLayout.EAST,
+        playerPanels[5]);
+    layout
+        .putConstraint(SpringLayout.NORTH, playerPanels[6], 5, SpringLayout.SOUTH, pokerTable);
+
+    layout.putConstraint(SpringLayout.WEST, playerPanels[7], 5, SpringLayout.EAST,
+        playerPanels[6]);
+    layout.putConstraint(SpringLayout.EAST, playerPanels[7], 5, SpringLayout.EAST, pokerTable);
+    layout
+        .putConstraint(SpringLayout.NORTH, playerPanels[7], 5, SpringLayout.SOUTH, pokerTable);
+
+    layout.putConstraint(SpringLayout.WEST, miscPanel, 5, SpringLayout.EAST, playerPanels[7]);
+    layout.putConstraint(SpringLayout.NORTH, miscPanel, 5, SpringLayout.SOUTH, pokerTable);
+
+    layout
+        .putConstraint(SpringLayout.EAST, contentPanel, 5, SpringLayout.EAST, playerPanels[4]);
+    layout.putConstraint(SpringLayout.SOUTH, contentPanel, 5, SpringLayout.SOUTH,
+        playerPanels[6]);
+
+
+    Cards[] flop = new Cards[3];
+    databaseButton.addActionListener((ActionEvent e) -> {
+      for (int i = 0; i < 3; i++) {
+        Cards card = new Cards((Rank) tableCardComponents.get(i).get("value").getSelectedItem(),
+            (Suit) tableCardComponents.get(i).get("suit").getSelectedItem());
+        flop[i] = card;
+      }
+
+      Cards turn = new Cards((Rank) tableCardComponents.get(3).get("value").getSelectedItem(),
+          (Suit) tableCardComponents.get(3).get("suit").getSelectedItem());
+
+      Cards river = new Cards((Rank) tableCardComponents.get(4).get("value").getSelectedItem(),
+          (Suit) tableCardComponents.get(4).get("suit").getSelectedItem());
+
+      makeDiaryEntry(flop, turn, river);
+    });
+
+    add(contentPanel);
+    repaint();
+    validate();
+  }
+
+  //Method used to create a diary of the table
+  void makeDiaryEntry(Cards[] flop, Cards turn, Cards river) {
+    Hand[] hands = findHands();
+
+    try {
+      Game game = new Game();
+      for (Hand hand : hands) {
+        hand.setGame(game);
+        hand.save();
+      }
+      game.setFlop(flop);
+      game.setTurn(turn);
+      game.setRiver(river);
+      game.save();
+    } catch (SQLException ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  private JPanel playerCardPanel(int index) {
+    JPanel playerCardPanel = new JPanel();
+    playerCardPanel.setLayout(new GridBagLayout());
+    GridBagConstraints c = new GridBagConstraints();
+    ArrayList<JPanel> cardPanels = new ArrayList<>();
+    c.gridx = 0;
+    c.fill = GridBagConstraints.HORIZONTAL;
+    for (int i = 0; i < 2; i++) {
+      JComboBox<Rank> boxValue = new JComboBox<>(cardValue);
+      JComboBox<Suit> boxSuit = new JComboBox<>(suitValue);
+
+      JPanel cardPanel = new JPanel(new GridBagLayout());
+      GridBagConstraints cardConstraints = new GridBagConstraints();
+      cardPanel.setName(String.format("%d_player_cards_%d", index, i));
+      cardConstraints.gridx = 0;
+      cardConstraints.gridy = 0;
+      cardPanel.add(boxValue, cardConstraints);
+      cardConstraints.gridx = 1;
+      cardConstraints.gridwidth = 2;
+      cardPanel.add(boxSuit);
+
+      cardPanels.add(cardPanel);
+
+      c.gridy = i;
+      playerCardPanel.add(cardPanel, c);
+    }
+
+    playerCardComponents.put(index, cardPanels);
+
+    JButton removeButton = removeButton(index);
+    c.gridy = 2;
+    c.fill = GridBagConstraints.NONE;
+    playerCardPanel.add(removeButton, c);
+    playerCardPanel.setName(String.format("%d_player_card_panel", index));
+    playerCardPanels[index] = playerCardPanel;
+    return playerCardPanel;
+  }
+
+  private JPanel emptyPanel(int index) {
+    JPanel panel = new JPanel(new GridBagLayout());
+    GridBagConstraints c = new GridBagConstraints();
+    JButton addPlayer = addButton(index);
+
+    c.gridx = 1;
+    c.gridy = 1;
+
+    panel.add(addPlayer, c);
+
+    return panel;
+  }
+
+  private JButton addButton(int index) {
+    JButton button = new JButton("Add player");
+    button.setName(String.format("%d_player_add", index));
+    button.addActionListener((ActionEvent e) -> {
+      JButton source = (JButton) e.getSource();
+      String name = source.getName();
+      int sourceIndex = Integer.parseInt(name.split("_")[0]);
+      JPanel parent = playerPanels[sourceIndex];
+      CardLayout layout = (CardLayout) parent.getLayout();
+      layout.next(parent);
+      Player player = new Player(String.format("Player %d", sourceIndex + 1));
+
+      players.put(sourceIndex, player);
+
+      repaint();
+      validate();
+    });
+
+    return button;
+  }
+
+  private JButton removeButton(int index) {
+    JButton button = new JButton("Remove player");
+    button.setName(String.format("%d_player_remove", index));
+    button.addActionListener((ActionEvent e) -> {
+      JButton source = (JButton) e.getSource();
+      String name = source.getName();
+      int sourceIndex = Integer.parseInt(name.split("_")[0]);
+      JPanel parent = playerPanels[sourceIndex];
+      CardLayout layout = (CardLayout) parent.getLayout();
+      layout.next(parent);
+
+      clearPlayerData(sourceIndex);
+
+      repaint();
+      validate();
+    });
+
+    return button;
+  }
+
+  private void setupCommunal() {
+    GridBagConstraints tableConstraints = new GridBagConstraints();
+    tableConstraints.gridx = 0;
+    tableConstraints.gridy = 0;
+    tableConstraints.insets = new Insets(2, 1, 1, 1);
+    JLabel flopLabel = new JLabel("Flop");
+    pokerTable.add(flopLabel, tableConstraints);
+    tableConstraints.gridy = 1;
+
+    // Create and add Poker Table components
+    int tableGridx = 1;
+    for (int i = 0; i < 5; i++) {
+      JComboBox<Rank> value = new JComboBox<>(cardValue);
+      JComboBox<Suit> suit = new JComboBox<>(suitValue);
+
+      HashMap<String, JComboBox> boxes = new HashMap<>();
+
+      boxes.put("value", value);
+      boxes.put("suit", suit);
+
+      tableCardComponents.add(boxes);
+
+      if (i < 3) {
+        pokerTable.add(value, tableConstraints);
+        tableConstraints.gridx = tableGridx;
+        tableGridx++;
+        pokerTable.add(suit, tableConstraints);
+        tableConstraints.gridx = tableGridx;
+        tableGridx++;
+      }
+    }
+
+
+    //Start of the river
+    tableConstraints.gridy = 2;
+    tableConstraints.gridx = 0;
+    JLabel turnLabel = new JLabel("Turn");
+    pokerTable.add(turnLabel, tableConstraints);
+    tableConstraints.gridy = 3;
+    pokerTable.add(tableCardComponents.get(4).get("value"), tableConstraints);
+    tableConstraints.gridx = 1;
+    pokerTable.add(tableCardComponents.get(4).get("suit"), tableConstraints);
+    //Start of the turn
+    tableConstraints.gridy = 2;
+    tableConstraints.gridx = 2;
+    JLabel riverLabel = new JLabel("River");
+    pokerTable.add(riverLabel, tableConstraints);
+    tableConstraints.gridy = 3;
+    pokerTable.add(tableCardComponents.get(3).get("value"), tableConstraints);
+    tableConstraints.gridx = 3;
+    pokerTable.add(tableCardComponents.get(3).get("suit"), tableConstraints);
+  }
+
+  private void clearPlayerData(int index) {
+    players.remove(index);
+
+    ArrayList<JPanel> cardPanels = playerCardComponents.get(index);
+    for (JPanel panel : cardPanels) {
+      Component[] components = panel.getComponents();
+      for (Component component : components) {
+        JComboBox box = (JComboBox) component;
+        box.setSelectedIndex(0);
+      }
+    }
+  }
+
+  private Hand[] findHands() {
+    Hand[] hands = new Hand[players.size()];
+    int handIndex = 0;
+    for (HashMap.Entry<Integer, Player> entry : players.entrySet()) {
+      Player player = entry.getValue();
+      boolean status = player.save();
+      if (status) {
+        Cards[] cards = new Cards[2];
+        ArrayList<JPanel> cardPanels = playerCardComponents.get(entry.getKey());
+
+        for (int i = 0; i < 2; i++) {
+          JPanel panel = cardPanels.get(i);
+          JComboBox valueBox = (JComboBox) panel.getComponent(0);
+          JComboBox suitBox = (JComboBox) panel.getComponent(1);
+          Rank value = (Rank) valueBox.getSelectedItem();
+          Suit suit = (Suit) suitBox.getSelectedItem();
+          cards[i] = new Cards(value, suit);
         }
-        System.out.println(arrayHands[0].toString());
-        Game game = new Game();
-        game.setFlop(flop);
-        game.setTurn(turn);
-        game.setRiver(river);
-        game.setHands(arrayHands);                       
-        //Once all of the strings have a something in them then they can be added to the diary here. 
-        
+        Hand hand = new Hand(cards, player);
+        hands[handIndex] = hand;
+      }
+      handIndex++;
     }
-    JPanel playerPanelFactory(String name, int num){
-        Player player = new Player(name);
-        players.add(player);
-        setName(name);
-        JPanel playerPanel = new JPanel();
-        playerPanel.setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-        JComboBox boxValue1 = new JComboBox(cardValue);
-        JComboBox boxSuit1 = new JComboBox(suitValue);
-        JComboBox boxValue2 = new JComboBox(cardValue);
-        JComboBox boxSuit2 = new JComboBox(suitValue);
-        c.gridx=0;
-        c.gridy=0;
-        playerPanel.add(boxValue1,c);
-        c.gridx=1;
-        playerPanel.add(boxSuit1,c);
-        c.gridx=0;
-        c.gridy=1;
-        playerPanel.add(boxValue2,c);
-        c.gridx=1;
-        playerPanel.add(boxSuit2,c);
-        JButton button = makeButton(name);
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) { 
-                Cards card1 = new Cards((Rank)boxValue1.getSelectedItem(), (Suit)boxSuit1.getSelectedItem());
-                Cards card2 = new Cards((Rank)boxValue2.getSelectedItem(), (Suit)boxSuit2.getSelectedItem());
-                Cards [] cards = {card1,card2};
-                Hand hand = new Hand(cards,player);
-                hands.add(hand);
-            }
-        });        
-        return playerPanel;
-    }
-    public JButton makeButton(String name){
-        JButton button = new JButton(name);
-        button.setVisible(false);
-        return new JButton(name);
-    }
-    public void addPlayers(int start,int end){
-        for(int i =start;i<end;i++){
-                JButton button = addPlayersButtons.get(i);
-                button.doClick();
-            }        
-    }
-    public void removePlayers(int start,int end){
-        for(int i =start-1;i>=end;i--){
-                JButton button = removePlayersButtons.get(i);
-                button.doClick();
-            }
-        for(int i = start-1;i>=end;i--){
-            players.remove(players.get(players.size()-1));
-        }
-    }
-    
-    
+    return hands;
+  }
 }
-
