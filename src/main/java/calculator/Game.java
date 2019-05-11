@@ -97,7 +97,9 @@ public class Game {
     return turn;
 
   }
-
+  public void setTurn(Cards turn){
+      this.turn = turn;
+  }
   public Cards getRiver() {
     return river;
   }
@@ -117,6 +119,13 @@ public class Game {
   public Hand[] getHands() {
     return hands;
   }
+  /**
+   * Added this setHands deleted original without realizing it existed 
+   * @param hands 
+   */
+  public void setHands(Hand [] hands){
+      this.hands = hands;
+  }
 
   public Hand[] getHandsFromDB() {
     ArrayList<Hand> handList = new ArrayList<>();
@@ -133,10 +142,6 @@ public class Game {
     }
 
     return handList.toArray(new Hand[handList.size()]);
-  }
-
-  public void setHands(Hand[] hands) {
-    this.hands = hands;
   }
 
   public void addHand(Hand hand) {

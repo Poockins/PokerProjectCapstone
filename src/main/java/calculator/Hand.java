@@ -66,6 +66,18 @@ public class Hand {
     this.game = Game.findById(gameId);
     this.id = (Integer)params.get("id");
   }
+  /**
+   * This hand constructor was used in testing can be removed once final build
+   * is solidified 
+   * @param card1
+   * @param card2
+   * @param player 
+   */
+  public Hand(Cards card1, Cards card2, Player player){
+      Cards [] cards = {card1, card2};
+      this.cards= cards;
+      this.player = player;
+  }
 
   /**
    * Get the cards in the hand
@@ -165,6 +177,7 @@ public class Hand {
   }
 
   public String toString() {
-    return "";
+      String handString = player + " has a " + cards[0].toString() + " and " + cards[1].toString();
+    return handString;
   }
 }
