@@ -29,23 +29,23 @@ class PokerEvaluatorTest {
 	    card1 = new Cards(rank1, suit1);
 	    card2 = new Cards(rank2, suit2);
 	    // community card
-	    suit3 = Suit.SPADES;
-	    rank3 = Rank.TEN;
+	    suit3 = Suit.DIAMONDS;
+	    rank3 = Rank.SIX;
 	    card3 = new Cards(rank3, suit3);
 
 	    suit4 = Suit.SPADES;
 	    rank4 = Rank.JACK;
 	    card4 = new Cards(rank4, suit4);
 
-	    suit5 = Suit.SPADES;
-	    rank5 = Rank.KING;
+	    suit5 = Suit.DIAMONDS;
+	    rank5 = Rank.FIVE;
 	    card5 = new Cards(rank5, suit5);
 
-	    suit6 = Suit.SPADES;
-	    rank6 = Rank.QUEEN;
+	    suit6 = Suit.DIAMONDS;
+	    rank6 = Rank.FOUR;
 	    card6 = new Cards(rank6, suit6);
 
-	    suit7 = Suit.HEARTS;
+	    suit7 = Suit.DIAMONDS;
 	    rank7 = Rank.TWO;
 	    card7 = new Cards(rank7, suit7);
 
