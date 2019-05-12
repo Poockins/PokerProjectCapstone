@@ -1,9 +1,13 @@
 package calculator;
 
-import org.junit.jupiter.api.*;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CardsTests {
+
   @Test
   @DisplayName("Convert database string to card")
   void stringToCardTest() {

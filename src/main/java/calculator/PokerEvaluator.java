@@ -1,16 +1,17 @@
-package calculator;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Arrays;
-
 /**
  * This Class can evaluate a users hand efficiently to determine the hand that it currently has this
  * is mainly used to support the poker chart process. The poker chart determines what potential
  * users has.
  *
  * @author Thomas
- *
  */
+
+package calculator;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+
 public class PokerEvaluator {
 
   // Evaluator String
@@ -26,19 +27,20 @@ public class PokerEvaluator {
   }
 
 
-
   /**
    * Checks to see if the user has a rank card which is anything above 10. A high card is ten, jack,
    * queen, king and ace
    *
-   * @param userCards - The users hand
+   * @param userCards      - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if user has high card
    */
   public boolean hasHighCard(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
     for (Cards card : userCards) {
       if (card.getRank().getRankValue() >= 10)// has high card
+      {
         return true;
+      }
     }
 
     return false;
@@ -47,7 +49,7 @@ public class PokerEvaluator {
   /**
    * Checks to see if the user, not the community cards, has a pair.
    *
-   * @param userCards - The users hand
+   * @param userCards      - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has a pair
    */
@@ -58,7 +60,7 @@ public class PokerEvaluator {
   /**
    * Checks to see if it has a straight, but with all the same suits. Known as a straight flush
    *
-   * @param userCards - The users hand
+   * @param userCards      - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has a straight flush
    */
@@ -73,7 +75,7 @@ public class PokerEvaluator {
     for (int i = 0; i < totalResults.size(); i++) {
       if (totalResults.containsKey(i) && totalResults.get(i).size() > 0) {
         found.addAll(totalResults.get(i));
-        if(userResults.containsKey(i) && userResults.get(i).size() > 0) {
+        if (userResults.containsKey(i) && userResults.get(i).size() > 0) {
           playerUsed = true;
         }
         if (playerUsed && found.size() >= 5) {
@@ -88,7 +90,7 @@ public class PokerEvaluator {
     int[] suitCount = findSuitCount(new int[4], found);
 
     for (int i = 0; i < suitCount.length; i++) {
-      if(suitCount[i] >= 5) {
+      if (suitCount[i] >= 5) {
         return true;
       }
     }
@@ -98,7 +100,7 @@ public class PokerEvaluator {
   /**
    * Checks to see if the user has a full house.
    *
-   * @param userCards - The users hand
+   * @param userCards      - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has full house
    */
@@ -112,8 +114,8 @@ public class PokerEvaluator {
     boolean pairFound = false;
     boolean threeFound = false;
 
-    for(int i = 0; i < totalRanks.length; i++) {
-      if(totalRanks[i] == 2) {
+    for (int i = 0; i < totalRanks.length; i++) {
+      if (totalRanks[i] == 2) {
         pairFound = true;
         if (userRanks[i] > 0) {
           playerUsed = true;
@@ -132,7 +134,7 @@ public class PokerEvaluator {
   /**
    * Checks to see if the user has two pairs.
    *
-   * @param userCards - The users hand
+   * @param userCards      - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has two pair hand.
    */
@@ -143,7 +145,7 @@ public class PokerEvaluator {
   /**
    * It checks to see if the user has a straight. Basically card or cards
    *
-   * @param userCards - The users hand
+   * @param userCards      - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has has a straight.
    */
@@ -177,7 +179,7 @@ public class PokerEvaluator {
   /**
    * Checks to see if it has four of a kind in the Texas holden game.
    *
-   * @param userCards - The users hand
+   * @param userCards      - The users hand
    * @param communityCards - The community cards
    * @return T or F if the user has four of a kind.
    */
@@ -188,7 +190,7 @@ public class PokerEvaluator {
     int[] userRanks = findRankCount(foundRanks, userCards);
     int[] totalRanks = findRankCount(userRanks, communityCards);
 
-    for(int i = 0; i < totalRanks.length; i++) {
+    for (int i = 0; i < totalRanks.length; i++) {
       if (totalRanks[i] == 4 && userRanks[i] > 0) {
         result = true;
       }
@@ -200,7 +202,7 @@ public class PokerEvaluator {
   /**
    * Checks to see if it has three of a kind.
    *
-   * @param userCards - The users hand
+   * @param userCards      - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has three of a kind.
    */
@@ -211,7 +213,7 @@ public class PokerEvaluator {
     int[] userRanks = findRankCount(foundRanks, userCards);
     int[] totalRanks = findRankCount(userRanks, communityCards);
 
-    for(int i = 0; i < totalRanks.length; i++) {
+    for (int i = 0; i < totalRanks.length; i++) {
       if (totalRanks[i] == 3 && userRanks[i] > 0) {
         result = true;
       }
@@ -223,7 +225,7 @@ public class PokerEvaluator {
   /**
    * checks to see if there are five cards with the same suit
    *
-   * @param userCards - The users hand
+   * @param userCards      - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has a flush
    */
@@ -234,7 +236,7 @@ public class PokerEvaluator {
     boolean isFlush = false;
 
     for (int i = 0; i < totalSuits.length; i++) {
-      if(totalSuits[i] >= 5 && userSuits[i] > 0) {
+      if (totalSuits[i] >= 5 && userSuits[i] > 0) {
         isFlush = true;
       }
     }
@@ -244,7 +246,7 @@ public class PokerEvaluator {
   /**
    * Checks to see if it has a royal flush
    *
-   * @param userCards - The users hand
+   * @param userCards      - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has a royal flush
    */
@@ -274,7 +276,7 @@ public class PokerEvaluator {
    * Populates a given Hashmap with royal ranks and found cards of that rank
    *
    * @param royalValues Hashmap of possibly existing ranks and found cards of that rank
-   * @param cards Cards to check through
+   * @param cards       Cards to check through
    * @return Hashmap of card ranks and associated cards
    */
   private HashMap<Integer, ArrayList<Cards>> findRoyals(HashMap<Integer, ArrayList<Cards>> royalValues, ArrayList<Cards> cards) {
@@ -298,10 +300,11 @@ public class PokerEvaluator {
     return found;
   }
 
-  /** Create a hashmap of given cards keyed by rank
+  /**
+   * Create a hashmap of given cards keyed by rank
    *
    * @param previous existing hashmap of cards
-   * @param cards cards to sort
+   * @param cards    cards to sort
    * @return populated hashmap of cards keyed by rank
    */
   private HashMap<Integer, ArrayList<Cards>> hashByRank(HashMap<Integer, ArrayList<Cards>> previous, ArrayList<Cards> cards) {
@@ -328,6 +331,7 @@ public class PokerEvaluator {
 
   /**
    * Populates an array representing how many cards of a suit have been found
+   *
    * @param found previously found suit counts
    * @param cards Cards to check through
    * @return array representing how many cards of a suit have been found
@@ -351,7 +355,7 @@ public class PokerEvaluator {
    */
   private int[] findRankCount(int[] found, ArrayList<Cards> cards) {
     int[] result = Arrays.copyOf(found, found.length);
-    for (Cards card: cards) {
+    for (Cards card : cards) {
       int rankIndex = card.getRank().getRankValue() - 2; // Rank values start at 2 with ace being 14
       result[rankIndex]++;
     }
@@ -362,6 +366,7 @@ public class PokerEvaluator {
   /**
    * Finds the number of valid pairs given user and community cards.
    * Valid pairs means that at least one card from the pairs is in the user's hand
+   *
    * @param userCards
    * @param communityCards
    * @return number of pairs found

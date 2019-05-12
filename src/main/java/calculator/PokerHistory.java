@@ -1,42 +1,48 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package calculator;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-
 /**
+ * History panel to display past games
  *
  * @author elich
+ * @author Yuko Takegoshi
  */
-public class PokerHistory extends JPanel{
-    public PokerHistory(){
-        String hand = "", flop= "", turn ="",river="",result="";
-        String [][] dataRow = {{hand, flop,turn,river,result},{"","","","",""}};
-        String [] columnNames = {"Hand","Flop","Turn","River","Result"};
-        JPanel calcPanel = new JPanel();
-        JTable calcTable = new JTable(dataRow, columnNames); 
-        
-        JScrollPane sp = new JScrollPane(calcTable);
-        sp.setBounds(0, 0, 400, 100);
-        calcPanel.add(sp);
-        
-        JButton clearButton = new JButton("Clear History");
-        JButton deleteHistoryButton = new JButton("Delete Entry");
-        //JButton pokerCalculator = new JButton("Poker Calculator");
-        
-        calcPanel.add(sp);
-        calcPanel.add(clearButton);
-        calcPanel.add(deleteHistoryButton);
-        //calcPanel.add(pokerCalculator);
-        
-        
-        add(calcPanel);
-    }
-    
+
+package calculator;
+
+import javax.swing.*;
+
+public class PokerHistory extends JPanel {
+
+  public PokerHistory() {
+    JPanel historyPanel = new JPanel();
+
+    String[] columnNames = {"Name", "Date", "Hand", "Flop", "Turn", "River", "Result"};
+    String[][] data = Game.aggregateData();
+
+    JTable historyTable = new JTable(data, columnNames);
+
+    JScrollPane scroll = new JScrollPane(historyTable);
+
+    historyPanel.add(scroll);
+//    String hand = "", flop = "", turn = "", river = "", result = "";
+//    String[][] dataRow = {{hand, flop, turn, river, result}, {"", "", "", "", ""}};
+//    String[] columnNames = {"Hand", "Flop", "Turn", "River", "Result"};
+//    JPanel calcPanel = new JPanel();
+//    JTable calcTable = new JTable(dataRow, columnNames);
+//
+//    JScrollPane sp = new JScrollPane(calcTable);
+//    sp.setBounds(0, 0, 400, 100);
+//    calcPanel.add(sp);
+//
+//    JButton clearButton = new JButton("Clear History");
+//    JButton deleteHistoryButton = new JButton("Delete Entry");
+//    //JButton pokerCalculator = new JButton("Poker Calculator");
+//
+//    calcPanel.add(sp);
+//    calcPanel.add(clearButton);
+//    calcPanel.add(deleteHistoryButton);
+//    //calcPanel.add(pokerCalculator);
+//
+//    add(calcPanel);
+    add(historyPanel);
+  }
+
 }
