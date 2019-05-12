@@ -41,13 +41,13 @@ public class WelcomeScreen extends JFrame {
     JButton calculatorButton = new JButton("Go to Poker Calculator");
     JButton databaseButton = new JButton("Go to Poker Database");
 
-    mainPanel.add(welcomePanel);
-    mainPanel.setPreferredSize(
-        new Dimension(contentPane.getWidth() - controlPanel.getWidth(), contentPane.getHeight()));
     controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
     controlPanel.setPreferredSize(new Dimension(175, contentPane.getHeight()));
     controlPanel.add(calculatorButton);
     controlPanel.add(databaseButton);
+    mainPanel.add(welcomePanel);
+    mainPanel.setPreferredSize(
+        new Dimension(contentPane.getWidth() - (int) controlPanel.getPreferredSize().getWidth(), contentPane.getHeight()));
     welcomePanel.add(welcomeLabel);
     welcomePanel.setLayout(new BoxLayout(welcomePanel, BoxLayout.Y_AXIS));
     welcomePanel.add(Box.createVerticalStrut(100));
@@ -93,9 +93,17 @@ public class WelcomeScreen extends JFrame {
       validate();
     });
     databaseButton.addActionListener((ActionEvent e) -> {
+      SpringLayout mainLayout = new SpringLayout();
       mainPanel.removeAll();
-      JPanel historyPanel = new PokerHistory();
+      JPanel historyPanel = new PokerHistory(mainPanel);
       mainPanel.add(historyPanel);
+      mainPanel.setLayout(mainLayout);
+      mainLayout.putConstraint(SpringLayout.WEST, historyPanel, 5, SpringLayout.WEST, mainPanel);
+      mainLayout.putConstraint(SpringLayout.NORTH, historyPanel, 5, SpringLayout.NORTH, mainPanel);
+//
+//      historyPanel.setPreferredSize(
+//          new Dimension(mainPanel.getWidth(), mainPanel.getHeight()));
+//      mainPanel.add(historyPanel, BorderLayout.CENTER);
       repaint();
       validate();
     });

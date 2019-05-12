@@ -209,6 +209,7 @@ public class Game {
     String[] flopParam = Cards.toStringArray(flop);
     updated = db.updateQuery(query, flopParam, this.turn.toDataString(), this.river.toDataString(),
         this.id);
+
     if (updated > 0) {
       return true;
     } else {
@@ -216,30 +217,57 @@ public class Game {
     }
   }
 
-  public static String[][] aggregateData() {
+  /**
+   * Deletes the Game and associated Hands from the database.
+   *
+   * @return success status
+   * @throws SQLException
+   */
+  public boolean delete() throws SQLException {
+    int updated = 0;
+    DBConnection db = new DBConnection();
+    String query = "DELETE FROM games WHERE id = ?";
+    updated = db.updateQuery(query, this.id);
+
+//    Hand.deleteForGame(this);
+
+    if (updated > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+
+  public static Object[][] aggregateData() {
     ArrayList<Game> allGames = findAll();
-    ArrayList<String[]> data = new ArrayList<>();
+    ArrayList<Object[]> data = new ArrayList<>();
 
     for (Game game : allGames) {
       Cards[] flop = game.getFlop();
       String flopString = Cards.arrayToString(flop);
       String turn = game.getTurn().toString();
       String river = game.getRiver().toString();
-      String gameDate = game.getCreatedAt().toString();
-      String result = "";
-
-      for (Hand hand : game.getHandsFromDB()) {
-        Player player = hand.getPlayer();
-        String[] row = {player.getName(), gameDate, hand.toString(), flopString, turn, river, result};
-        data.add(row);
-      }
+      Date gameDate = game.getCreatedAt();
+      Object[] row = {gameDate, flopString, turn, river};
+      data.add(row);
     }
 
+    return data.toArray(new Object[data.size()][7]);
+  }
+
+  public String[][] aggregateDetails() {
+    Hand[] hands = getHandsFromDB();
+    ArrayList<String[]> data = new ArrayList<>();
+    for (Hand hand : hands) {
+      String preFlop = Double.toString(hand.calculateWin());
+      String flop = Double.toString(hand.calculateWin(this.flop));
+      String turn = Double.toString(hand.calculateWin(this.flop, this.turn));
+      String river = Double.toString(hand.calculateWin(this.flop, this.turn, this.river));
+      String[] row = {hand.getPlayer().getName(), hand.toString(), preFlop, flop, turn, river};
+      data.add(row);
+    }
 
     return data.toArray(new String[data.size()][7]);
   }
-
-//  public Player getWinner() {///needs changed
-//    return players[0];
-//  }
 }

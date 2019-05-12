@@ -152,7 +152,7 @@ public class DBConnection {
         "player_id INT, " +
         "game_id INT, " +
         "FOREIGN KEY(player_id) REFERENCES players, " +
-        "FOREIGN KEY(game_id) REFERENCES games);";
+        "FOREIGN KEY(game_id) REFERENCES games ON DELETE CASCADE);";
 
     updateQuery(query);
   }

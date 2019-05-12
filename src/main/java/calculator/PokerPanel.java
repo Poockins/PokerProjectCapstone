@@ -23,7 +23,6 @@ public class PokerPanel extends JPanel {
   JPanel[] playerPanels = new JPanel[8];
   JPanel[] playerCardPanels = new JPanel[8];
 
-  //  ArrayList<Hand> hands = new ArrayList();
   Rank[] cardValue = Rank.values();
   Suit[] suitValue = Suit.values();
 
@@ -161,6 +160,7 @@ public class PokerPanel extends JPanel {
 
   /**
    * Saves the current game board to the database
+   *
    * @param flop
    * @param turn
    * @param river
@@ -381,6 +381,7 @@ public class PokerPanel extends JPanel {
 
   /**
    * Clears a player from the board, resetting their cards and removing the Player object
+   *
    * @param index Player index to clear
    */
   private void clearPlayerData(int index) {
@@ -400,7 +401,7 @@ public class PokerPanel extends JPanel {
    * Reset all cards on the table
    */
   private void clearTable() {
-    for(HashMap<String, JComboBox> component : tableCardComponents) {
+    for (HashMap<String, JComboBox> component : tableCardComponents) {
       for (JComboBox box : component.values()) {
         box.setSelectedIndex(0);
       }

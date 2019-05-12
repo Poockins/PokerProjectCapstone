@@ -65,10 +65,18 @@ public class Cards implements Comparable<Cards> {
    * @return Card created from database string
    */
   public static Cards stringToCard(String data) {
-    String[] split = data.split("::");
-    Rank rank = Rank.valueOf(split[0]);
-    Suit suit = Suit.valueOf(split[1]);
-    return new Cards(rank, suit);
+    if (data instanceof String && data.length() > 0) {
+      String[] split = data.split("::");
+      if (split.length >= 2) {
+        Rank rank = Rank.valueOf(split[0]);
+        Suit suit = Suit.valueOf(split[1]);
+        return new Cards(rank, suit);
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
   }
 
   /**

@@ -180,10 +180,71 @@ public class Hand {
     return status;
   }
 
-  public double calculateWin() {///// Needs changed
+  public double calculateWin() {
+    PokerCalculator cal = new PokerCalculator();
+    for (Cards card : this.cards) {
+      cal.addUserCard(card);
+    }
 
-    double win = 0.0;
-    return win;
+    return cal.probabilityCalculation();
+  }
+
+  public double calculateWin(Cards[] flop) {
+    PokerCalculator cal = new PokerCalculator();
+    for (Cards card : this.cards) {
+      cal.addUserCard(card);
+    }
+
+    if (flop != null) {
+      for (Cards card : flop) {
+        cal.addCommunityCard(card);
+      }
+    }
+
+    return cal.probabilityCalculation();
+  }
+
+  public double calculateWin(Cards[] flop, Cards turn) {
+    PokerCalculator cal = new PokerCalculator();
+    for (Cards card : this.cards) {
+      cal.addUserCard(card);
+    }
+
+    if (flop != null) {
+      for (Cards card : flop) {
+        cal.addCommunityCard(card);
+      }
+    }
+
+    if (turn != null) {
+      cal.addCommunityCard(turn);
+    }
+
+    return cal.probabilityCalculation();
+  }
+
+  public double calculateWin(Cards[] flop, Cards turn, Cards river) {
+    PokerCalculator cal = new PokerCalculator();
+    for (Cards card : this.cards) {
+      cal.addUserCard(card);
+    }
+
+    if (flop != null) {
+      for (Cards card : flop) {
+        cal.addCommunityCard(card);
+      }
+    }
+
+    if (turn != null) {
+      cal.addCommunityCard(turn);
+    }
+
+    if (river != null) {
+      cal.addCommunityCard(river);
+    }
+
+
+    return cal.probabilityCalculation();
   }
 
   public String toString() {
