@@ -26,9 +26,7 @@ public class PokerCalculator {
    * The Constructor of the poker Calculator class
    */
   public PokerCalculator() {
-
     pokerChartObj = new PokerChart();
-
   }
 
   /**
@@ -39,7 +37,6 @@ public class PokerCalculator {
   public void addUserCard(Cards card) {
     // adding one of the two cards to the userhand list.
     userCards.add(card);
-
   }
 
   /**
@@ -74,7 +71,7 @@ public class PokerCalculator {
    * This method will come up with the odds by expressing it in percentages. Poker odds tell you the
    * probability of winning.
    */
-  public void probabilityCalculation() {
+  public double probabilityCalculation() {
     // The outs - the cards that can help you win
     // The lose - the card that will make you lose
     int cardDeck, cardInSuit, cardsUnseen, cardsInHand, cardsDealt;
@@ -224,7 +221,7 @@ public class PokerCalculator {
       // we convert the ratio to a percentage.
       probabilityPercent = (outs / (outs + lose)) * 100;
     }
-
+    return probabilityPercent;
   }
 
   /**

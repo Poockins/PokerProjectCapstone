@@ -8,41 +8,29 @@
 package calculator;
 
 import javax.swing.*;
+import javax.swing.table.TableCellRenderer;
+import java.awt.*;
 
 public class PokerHistory extends JPanel {
 
-  public PokerHistory() {
+  public PokerHistory(JPanel parent) {
     JPanel historyPanel = new JPanel();
+    Dimension parentSize = new Dimension((int) parent.getPreferredSize().getWidth(), (int) parent.getPreferredSize().getHeight());
+    historyPanel.setPreferredSize(parentSize);
 
-    String[] columnNames = {"Name", "Date", "Hand", "Flop", "Turn", "River", "Result"};
-    String[][] data = Game.aggregateData();
+    JTable gameTable = new JTable(new GameTableModel());
+    JScrollPane scrollPane = new JScrollPane(gameTable);
+    scrollPane.setPreferredSize(parentSize);
+    TableUtils.setTableColumnsWidth(gameTable, (int) parentSize.getWidth(), 7, 28, 15, 15, 15, 15);
+    gameTable.setFillsViewportHeight(true);
 
-    JTable historyTable = new JTable(data, columnNames);
+    TableCellRenderer buttonRenderer = new JTableButtonRenderer();
+    gameTable.getColumn("View details").setCellRenderer(buttonRenderer);
+    gameTable.getColumn("Delete").setCellRenderer(buttonRenderer);
+    gameTable.addMouseListener(new JTableButtonMouseListener(gameTable));
 
-    JScrollPane scroll = new JScrollPane(historyTable);
+    historyPanel.add(scrollPane);
 
-    historyPanel.add(scroll);
-//    String hand = "", flop = "", turn = "", river = "", result = "";
-//    String[][] dataRow = {{hand, flop, turn, river, result}, {"", "", "", "", ""}};
-//    String[] columnNames = {"Hand", "Flop", "Turn", "River", "Result"};
-//    JPanel calcPanel = new JPanel();
-//    JTable calcTable = new JTable(dataRow, columnNames);
-//
-//    JScrollPane sp = new JScrollPane(calcTable);
-//    sp.setBounds(0, 0, 400, 100);
-//    calcPanel.add(sp);
-//
-//    JButton clearButton = new JButton("Clear History");
-//    JButton deleteHistoryButton = new JButton("Delete Entry");
-//    //JButton pokerCalculator = new JButton("Poker Calculator");
-//
-//    calcPanel.add(sp);
-//    calcPanel.add(clearButton);
-//    calcPanel.add(deleteHistoryButton);
-//    //calcPanel.add(pokerCalculator);
-//
-//    add(calcPanel);
     add(historyPanel);
   }
-
 }
