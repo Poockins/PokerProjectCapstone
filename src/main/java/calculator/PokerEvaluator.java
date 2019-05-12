@@ -1,18 +1,15 @@
-package calculator;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.ListIterator;
-import java.util.HashMap;
-import java.util.Arrays;
-
 /**
  * This Class can evaluate a users hand efficiently to determine the hand that it currently has this
  * is mainly used to support the poker chart process. The poker chart determines what potential
  * users has.
  *
  * @author Thomas
- *
  */
+
+package calculator;
+
+import java.util.*;
+
 public class PokerEvaluator {
 
   // Evaluator String
@@ -28,7 +25,6 @@ public class PokerEvaluator {
   }
 
 
-
   /**
    * Checks to see if the user has a rank card which is anything above 10. A high card is ten, jack,
    * queen, king and ace
@@ -40,7 +36,9 @@ public class PokerEvaluator {
   public boolean hasHighCard(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
     for (Cards card : userCards) {
       if (card.getRank().getRankValue() >= 10)// has high card
+      {
         return true;
+      }
     }
 
     return false;
@@ -85,8 +83,8 @@ public class PokerEvaluator {
     boolean pairFound = false;
     boolean threeFound = false;
 
-    for(int i = 0; i < totalRanks.length; i++) {
-      if(totalRanks[i] == 2) {
+    for (int i = 0; i < totalRanks.length; i++) {
+      if (totalRanks[i] == 2) {
         pairFound = true;
         if (userRanks[i] > 0) {
           playerUsed = true;
@@ -149,7 +147,9 @@ public class PokerEvaluator {
       previousCard = nextCard;
 
       if (differenceIndex == 1)//
+      {
         chronOrderCards.add(nextCard);// adding card if its chronOrder
+      }
 
 
     } // end of while loop
@@ -158,10 +158,11 @@ public class PokerEvaluator {
     if (chronOrderCards.size() >= 5) {
       // if the users cards is not part of the chronological card then we return false and true if
       // its in the list.
-      if (chronOrderCards.contains(userCards.get(0)) || chronOrderCards.contains(userCards.get(1)))
+      if (chronOrderCards.contains(userCards.get(0)) || chronOrderCards.contains(userCards.get(1))) {
         return true;
-      else
+      } else {
         return false;
+      }
     }
 
     return false;
@@ -181,7 +182,7 @@ public class PokerEvaluator {
     int[] userRanks = findRankCount(foundRanks, userCards);
     int[] totalRanks = findRankCount(userRanks, communityCards);
 
-    for(int i = 0; i < totalRanks.length; i++) {
+    for (int i = 0; i < totalRanks.length; i++) {
       if (totalRanks[i] == 4 && userRanks[i] > 0) {
         result = true;
       }
@@ -204,7 +205,7 @@ public class PokerEvaluator {
     int[] userRanks = findRankCount(foundRanks, userCards);
     int[] totalRanks = findRankCount(userRanks, communityCards);
 
-    for(int i = 0; i < totalRanks.length; i++) {
+    for (int i = 0; i < totalRanks.length; i++) {
       if (totalRanks[i] == 3 && userRanks[i] > 0) {
         result = true;
       }
@@ -227,7 +228,7 @@ public class PokerEvaluator {
     boolean isFlush = false;
 
     for (int i = 0; i < totalSuits.length; i++) {
-      if(totalSuits[i] >= 5 && userSuits[i] > 0) {
+      if (totalSuits[i] >= 5 && userSuits[i] > 0) {
         isFlush = true;
       }
     }
@@ -319,7 +320,7 @@ public class PokerEvaluator {
    */
   private int[] findRankCount(int[] found, ArrayList<Cards> cards) {
     int[] result = Arrays.copyOf(found, found.length);
-    for (Cards card: cards) {
+    for (Cards card : cards) {
       int rankIndex = card.getRank().getRankValue() - 2; // Rank values start at 2 with ace being 14
       result[rankIndex]++;
     }
