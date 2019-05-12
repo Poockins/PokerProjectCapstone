@@ -100,10 +100,7 @@ public class WelcomeScreen extends JFrame {
       mainPanel.setLayout(mainLayout);
       mainLayout.putConstraint(SpringLayout.WEST, historyPanel, 5, SpringLayout.WEST, mainPanel);
       mainLayout.putConstraint(SpringLayout.NORTH, historyPanel, 5, SpringLayout.NORTH, mainPanel);
-//
-//      historyPanel.setPreferredSize(
-//          new Dimension(mainPanel.getWidth(), mainPanel.getHeight()));
-//      mainPanel.add(historyPanel, BorderLayout.CENTER);
+
       repaint();
       validate();
     });
