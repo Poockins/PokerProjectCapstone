@@ -42,32 +42,7 @@ public class PokerPanel extends JPanel {
 
     setupCommunal();
 
-    /**
-     *Panels for players
-     *Each player has their own panel that is on the screen. Table starts
-     *out with 2 players and selecting the number indicator establishes the
-     *the new number
-     **/
-
-    for (int i = 0; i < 8; i++) {
-      JPanel playerPanel = new JPanel(new CardLayout());
-      String playerName = String.format("Player %d", i + 1);
-      TitledBorder playerTitle = BorderFactory
-          .createTitledBorder(blackline, playerName);
-      playerTitle.setTitleJustification(TitledBorder.LEFT);
-      playerPanel.setBorder(playerTitle);
-      playerPanel.setPreferredSize(new Dimension(pokerTable.getPreferredSize().width / 3,
-          pokerTable.getPreferredSize().height));
-      playerPanel.setName(String.format("%d_player_panel", i));
-      JPanel emptyPanel = emptyPanel(i);
-      JPanel cardPanel = playerCardPanel(i);
-      playerPanel.add(emptyPanel, "empty");
-      playerPanel.add(cardPanel, "cards");
-
-      playerPanels[i] = playerPanel;
-
-      repaint();
-    }
+    createPlayerPanels();
 
     //Calculation Panel
     String odds = "", cardsNeeded = "";
@@ -90,6 +65,18 @@ public class PokerPanel extends JPanel {
     miscPanel.setLayout(new BoxLayout(miscPanel, BoxLayout.Y_AXIS));
     JButton databaseButton = new JButton("Save to Database");
     JButton clearButton = new JButton("Clear Form");
+    clearButton.addActionListener((ActionEvent e) -> {
+      for (int i = 0; i < playerPanels.length; i++) {
+        CardLayout panelLayout = (CardLayout) playerPanels[i].getLayout();
+        panelLayout.show(playerPanels[i], "empty");
+        clearPlayerData(i);
+      }
+
+      clearTable();
+      repaint();
+      validate();
+    });
+
     miscPanel.add(clearButton);
     miscPanel.add(databaseButton);
 
@@ -172,8 +159,13 @@ public class PokerPanel extends JPanel {
     validate();
   }
 
-  //Method used to create a diary of the table
-  void makeDiaryEntry(Cards[] flop, Cards turn, Cards river) {
+  /**
+   * Saves the current game board to the database
+   * @param flop
+   * @param turn
+   * @param river
+   */
+  private void makeDiaryEntry(Cards[] flop, Cards turn, Cards river) {
     Hand[] hands = findHands();
 
     try {
@@ -191,6 +183,12 @@ public class PokerPanel extends JPanel {
     }
   }
 
+  /**
+   * Creates a panel for an active player, showing their cards and a button to remove them
+   *
+   * @param index Player index for the panel
+   * @return JPanel for active player of index
+   */
   private JPanel playerCardPanel(int index) {
     JPanel playerCardPanel = new JPanel();
     playerCardPanel.setLayout(new GridBagLayout());
@@ -229,6 +227,12 @@ public class PokerPanel extends JPanel {
     return playerCardPanel;
   }
 
+  /**
+   * Creates a panel for an empty player state
+   *
+   * @param index Index of the player
+   * @return JPanel of the player's empty state
+   */
   private JPanel emptyPanel(int index) {
     JPanel panel = new JPanel(new GridBagLayout());
     GridBagConstraints c = new GridBagConstraints();
@@ -242,6 +246,12 @@ public class PokerPanel extends JPanel {
     return panel;
   }
 
+  /**
+   * Create a button to add a player
+   *
+   * @param index Index of player to add
+   * @return JButton to add a player to the board
+   */
   private JButton addButton(int index) {
     JButton button = new JButton("Add player");
     button.setName(String.format("%d_player_add", index));
@@ -263,6 +273,12 @@ public class PokerPanel extends JPanel {
     return button;
   }
 
+  /**
+   * Create a button to remove a player
+   *
+   * @param index Index of the player to remove
+   * @return JButton to remove a player
+   */
   private JButton removeButton(int index) {
     JButton button = new JButton("Remove player");
     button.setName(String.format("%d_player_remove", index));
@@ -283,6 +299,9 @@ public class PokerPanel extends JPanel {
     return button;
   }
 
+  /**
+   * Create and set up the community card components
+   */
   private void setupCommunal() {
     GridBagConstraints tableConstraints = new GridBagConstraints();
     tableConstraints.gridx = 0;
@@ -315,7 +334,6 @@ public class PokerPanel extends JPanel {
       }
     }
 
-
     //Start of the river
     tableConstraints.gridy = 2;
     tableConstraints.gridx = 0;
@@ -336,6 +354,35 @@ public class PokerPanel extends JPanel {
     pokerTable.add(tableCardComponents.get(3).get("suit"), tableConstraints);
   }
 
+  /**
+   * Creates the panels for every player on the board with empty and active states
+   */
+  private void createPlayerPanels() {
+    for (int i = 0; i < 8; i++) {
+      JPanel playerPanel = new JPanel(new CardLayout());
+      String playerName = String.format("Player %d", i + 1);
+      TitledBorder playerTitle = BorderFactory
+          .createTitledBorder(blackline, playerName);
+      playerTitle.setTitleJustification(TitledBorder.LEFT);
+      playerPanel.setBorder(playerTitle);
+      playerPanel.setPreferredSize(new Dimension(pokerTable.getPreferredSize().width / 3,
+          pokerTable.getPreferredSize().height));
+      playerPanel.setName(String.format("%d_player_panel", i));
+      JPanel emptyPanel = emptyPanel(i);
+      JPanel cardPanel = playerCardPanel(i);
+      playerPanel.add(emptyPanel, "empty");
+      playerPanel.add(cardPanel, "cards");
+
+      playerPanels[i] = playerPanel;
+
+      repaint();
+    }
+  }
+
+  /**
+   * Clears a player from the board, resetting their cards and removing the Player object
+   * @param index Player index to clear
+   */
   private void clearPlayerData(int index) {
     players.remove(index);
 
@@ -349,6 +396,22 @@ public class PokerPanel extends JPanel {
     }
   }
 
+  /**
+   * Reset all cards on the table
+   */
+  private void clearTable() {
+    for(HashMap<String, JComboBox> component : tableCardComponents) {
+      for (JComboBox box : component.values()) {
+        box.setSelectedIndex(0);
+      }
+    }
+  }
+
+  /**
+   * Create Hands from the currently selected cards
+   *
+   * @return Hands representing those on the board
+   */
   private Hand[] findHands() {
     Hand[] hands = new Hand[players.size()];
     int handIndex = 0;
