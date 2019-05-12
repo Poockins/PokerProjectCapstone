@@ -8,7 +8,9 @@
 
 package calculator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 public class PokerEvaluator {
 
@@ -29,7 +31,7 @@ public class PokerEvaluator {
    * Checks to see if the user has a rank card which is anything above 10. A high card is ten, jack,
    * queen, king and ace
    *
-   * @param userCards - The users hand
+   * @param userCards      - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if user has high card
    */
@@ -47,7 +49,7 @@ public class PokerEvaluator {
   /**
    * Checks to see if the user, not the community cards, has a pair.
    *
-   * @param userCards - The users hand
+   * @param userCards      - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has a pair
    */
@@ -58,18 +60,47 @@ public class PokerEvaluator {
   /**
    * Checks to see if it has a straight, but with all the same suits. Known as a straight flush
    *
-   * @param userCards - The users hand
+   * @param userCards      - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has a straight flush
    */
   public boolean hasStraightFlush(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
-    return (hasStraight(userCards, communityCards) && hasFlush(userCards, communityCards));
+    HashMap<Integer, ArrayList<Cards>> values = new HashMap<>();
+
+    HashMap<Integer, ArrayList<Cards>> userResults = hashByRank(values, userCards);
+    HashMap<Integer, ArrayList<Cards>> totalResults = hashByRank(userResults, communityCards);
+
+    ArrayList<Cards> found = new ArrayList<>();
+    boolean playerUsed = false;
+    for (int i = 0; i < totalResults.size(); i++) {
+      if (totalResults.containsKey(i) && totalResults.get(i).size() > 0) {
+        found.addAll(totalResults.get(i));
+        if (userResults.containsKey(i) && userResults.get(i).size() > 0) {
+          playerUsed = true;
+        }
+        if (playerUsed && found.size() >= 5) {
+          break;
+        }
+      } else {
+        found.clear();
+        playerUsed = false;
+      }
+    }
+
+    int[] suitCount = findSuitCount(new int[4], found);
+
+    for (int i = 0; i < suitCount.length; i++) {
+      if (suitCount[i] >= 5) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
    * Checks to see if the user has a full house.
    *
-   * @param userCards - The users hand
+   * @param userCards      - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has full house
    */
@@ -103,7 +134,7 @@ public class PokerEvaluator {
   /**
    * Checks to see if the user has two pairs.
    *
-   * @param userCards - The users hand
+   * @param userCards      - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has two pair hand.
    */
@@ -114,54 +145,31 @@ public class PokerEvaluator {
   /**
    * It checks to see if the user has a straight. Basically card or cards
    *
-   * @param userCards - The users hand
+   * @param userCards      - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has has a straight.
    */
   public boolean hasStraight(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
-    ArrayList<Cards> allCards = new ArrayList<Cards>();
-    ArrayList<Cards> chronOrderCards = new ArrayList<Cards>();
-    Cards previousCard;
+    int[] counts = new int[13];
 
-    allCards.addAll(communityCards);
-    allCards.addAll(userCards);
+    int[] userCounts = findRankCount(counts, userCards);
+    int[] totalCounts = findRankCount(userCounts, communityCards);
 
+    int straightCount = 0;
+    boolean playerUsed = false;
 
-    Collections.sort(allCards);
-
-    ListIterator<Cards> iterator = allCards.listIterator();
-
-    int differenceIndex = 0;
-
-    previousCard = (Cards) iterator.next();
-    chronOrderCards.add(previousCard);
-
-    while (iterator.hasNext())// begin
-    {
-
-
-      Cards nextCard = (Cards) iterator.next();
-
-      differenceIndex = nextCard.getRank().getRankValue() - previousCard.getRank().getRankValue();
-
-      previousCard = nextCard;
-
-      if (differenceIndex == 1)//
-      {
-        chronOrderCards.add(nextCard);// adding card if its chronOrder
-      }
-
-
-    } // end of while loop
-
-
-    if (chronOrderCards.size() >= 5) {
-      // if the users cards is not part of the chronological card then we return false and true if
-      // its in the list.
-      if (chronOrderCards.contains(userCards.get(0)) || chronOrderCards.contains(userCards.get(1))) {
-        return true;
+    for (int i = 0; i < totalCounts.length; i++) {
+      if (totalCounts[i] > 0) {
+        straightCount++;
+        if (userCounts[i] > 0) {
+          playerUsed = true;
+        }
+        if (playerUsed && straightCount >= 5) {
+          return true;
+        }
       } else {
-        return false;
+        straightCount = 0;
+        playerUsed = false;
       }
     }
 
@@ -171,7 +179,7 @@ public class PokerEvaluator {
   /**
    * Checks to see if it has four of a kind in the Texas holden game.
    *
-   * @param userCards - The users hand
+   * @param userCards      - The users hand
    * @param communityCards - The community cards
    * @return T or F if the user has four of a kind.
    */
@@ -194,7 +202,7 @@ public class PokerEvaluator {
   /**
    * Checks to see if it has three of a kind.
    *
-   * @param userCards - The users hand
+   * @param userCards      - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has three of a kind.
    */
@@ -217,7 +225,7 @@ public class PokerEvaluator {
   /**
    * checks to see if there are five cards with the same suit
    *
-   * @param userCards - The users hand
+   * @param userCards      - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has a flush
    */
@@ -238,7 +246,7 @@ public class PokerEvaluator {
   /**
    * Checks to see if it has a royal flush
    *
-   * @param userCards - The users hand
+   * @param userCards      - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has a royal flush
    */
@@ -268,27 +276,53 @@ public class PokerEvaluator {
    * Populates a given Hashmap with royal ranks and found cards of that rank
    *
    * @param royalValues Hashmap of possibly existing ranks and found cards of that rank
-   * @param cards Cards to check through
-   * @return Populated Hashmap of card ranks and associated cards
+   * @param cards       Cards to check through
+   * @return Hashmap of card ranks and associated cards
    */
   private HashMap<Integer, ArrayList<Cards>> findRoyals(HashMap<Integer, ArrayList<Cards>> royalValues, ArrayList<Cards> cards) {
     HashMap<Integer, ArrayList<Cards>> found = new HashMap<>();
     found.putAll(royalValues);
+
+    HashMap<Integer, ArrayList<Cards>> sorted = hashByRank(found, cards);
+
+    for (int i = 10; i <= 14; i++) {
+      if (royalValues.containsKey(i)) {
+        ArrayList<Cards> existing = royalValues.get(i);
+        ArrayList<Cards> foundCards = new ArrayList<>();
+        foundCards.addAll(existing);
+        foundCards.addAll(sorted.get(i));
+        found.put(i, foundCards);
+      } else if (sorted.containsKey(i)) {
+        found.put(i, sorted.get(i));
+      }
+    }
+
+    return found;
+  }
+
+  /**
+   * Create a hashmap of given cards keyed by rank
+   *
+   * @param previous existing hashmap of cards
+   * @param cards    cards to sort
+   * @return populated hashmap of cards keyed by rank
+   */
+  private HashMap<Integer, ArrayList<Cards>> hashByRank(HashMap<Integer, ArrayList<Cards>> previous, ArrayList<Cards> cards) {
+    HashMap<Integer, ArrayList<Cards>> found = new HashMap<>();
+    found.putAll(previous);
+
     for (Cards check : cards) {
       int value = check.getRank().getRankValue();
-
-      if (value >= 10 && value <= 14) {
-        if (royalValues.containsKey(value)) {
-          ArrayList<Cards> existing = royalValues.get(value);
-          ArrayList<Cards> foundCards = new ArrayList<>();
-          foundCards.addAll(existing);
-          foundCards.add(check);
-          found.put(value, existing);
-        } else {
-          ArrayList<Cards> newCard = new ArrayList<>();
-          newCard.add(check);
-          found.put(value, newCard);
-        }
+      if (previous.containsKey(value)) {
+        ArrayList<Cards> existing = previous.get(value);
+        ArrayList<Cards> foundCards = new ArrayList<>();
+        foundCards.addAll(existing);
+        foundCards.add(check);
+        found.put(value, existing);
+      } else {
+        ArrayList<Cards> newCard = new ArrayList<>();
+        newCard.add(check);
+        found.put(value, newCard);
       }
     }
 
@@ -297,6 +331,7 @@ public class PokerEvaluator {
 
   /**
    * Populates an array representing how many cards of a suit have been found
+   *
    * @param found previously found suit counts
    * @param cards Cards to check through
    * @return array representing how many cards of a suit have been found
@@ -328,6 +363,14 @@ public class PokerEvaluator {
     return result;
   }
 
+  /**
+   * Finds the number of valid pairs given user and community cards.
+   * Valid pairs means that at least one card from the pairs is in the user's hand
+   *
+   * @param userCards
+   * @param communityCards
+   * @return number of pairs found
+   */
   private int pairCount(ArrayList<Cards> userCards, ArrayList<Cards> communityCards) {
     int[] found = new int[13];
     int pairs = 0;

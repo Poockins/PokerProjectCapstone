@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PokerEvaluatorTest {
-
-
   private PokerEvaluator calcEval = new PokerEvaluator();
   private PokerCalculator calcObj = new PokerCalculator();
 
@@ -21,6 +19,7 @@ class PokerEvaluatorTest {
     calcObj.resetUserHand();
     calcObj.resetCommunityCards();
 
+
     suit1 = Suit.DIAMONDS;
     rank1 = Rank.THREE;
 
@@ -30,23 +29,23 @@ class PokerEvaluatorTest {
     card1 = new Cards(rank1, suit1);
     card2 = new Cards(rank2, suit2);
     // community card
-    suit3 = Suit.SPADES;
-    rank3 = Rank.TEN;
+    suit3 = Suit.DIAMONDS;
+    rank3 = Rank.SIX;
     card3 = new Cards(rank3, suit3);
 
     suit4 = Suit.SPADES;
     rank4 = Rank.JACK;
     card4 = new Cards(rank4, suit4);
 
-    suit5 = Suit.SPADES;
-    rank5 = Rank.KING;
+    suit5 = Suit.DIAMONDS;
+    rank5 = Rank.FIVE;
     card5 = new Cards(rank5, suit5);
 
-    suit6 = Suit.SPADES;
-    rank6 = Rank.QUEEN;
+    suit6 = Suit.DIAMONDS;
+    rank6 = Rank.FOUR;
     card6 = new Cards(rank6, suit6);
 
-    suit7 = Suit.HEARTS;
+    suit7 = Suit.DIAMONDS;
     rank7 = Rank.TWO;
     card7 = new Cards(rank7, suit7);
 
@@ -68,6 +67,7 @@ class PokerEvaluatorTest {
 
     calcObj.resetUserHand();
     calcObj.resetCommunityCards();
+
 
     suit1 = Suit.DIAMONDS;
     rank1 = Rank.THREE;
@@ -107,6 +107,7 @@ class PokerEvaluatorTest {
     calcObj.addCommunityCard(card6);
     calcObj.addCommunityCard(card7);
 
+
     assertTrue(calcEval.hasFullHouse(calcObj.getUserCards(), calcObj.getCommunityCards()));
   }
 
@@ -115,6 +116,7 @@ class PokerEvaluatorTest {
 
     calcObj.resetUserHand();
     calcObj.resetCommunityCards();
+
 
     suit1 = Suit.CLUBS;
     rank1 = Rank.TWO;
@@ -137,6 +139,7 @@ class PokerEvaluatorTest {
     rank5 = Rank.SIX;
     card5 = new Cards(rank5, suit5);
 
+
     calcObj.addUserCard(card1);
     calcObj.addUserCard(card2);
 
@@ -149,6 +152,7 @@ class PokerEvaluatorTest {
 
   @Test
   public void testHasHighCard() {
+
 
     calcObj.resetUserHand();
 
@@ -194,6 +198,7 @@ class PokerEvaluatorTest {
     rank5 = Rank.TEN;
     card5 = new Cards(rank5, suit5);
 
+
     calcObj.addUserCard(card1);
     calcObj.addUserCard(card2);
 
@@ -210,6 +215,7 @@ class PokerEvaluatorTest {
   public void testHasTwoPairs() {
     calcObj.resetUserHand();
     calcObj.resetCommunityCards();
+
 
     suit1 = Suit.CLUBS;
     rank1 = Rank.EIGHT;
@@ -232,6 +238,7 @@ class PokerEvaluatorTest {
     rank5 = Rank.TEN;
     card5 = new Cards(rank5, suit5);
 
+
     calcObj.addUserCard(card1);
     calcObj.addUserCard(card2);
 
@@ -248,6 +255,7 @@ class PokerEvaluatorTest {
 
     calcObj.resetUserHand();
     calcObj.resetCommunityCards();
+
 
     suit1 = Suit.CLUBS;
     rank1 = Rank.SEVEN;
@@ -270,6 +278,7 @@ class PokerEvaluatorTest {
     rank5 = Rank.ACE;
     card5 = new Cards(rank5, suit5);
 
+
     calcObj.addUserCard(card1);
     calcObj.addUserCard(card2);
 
@@ -285,6 +294,7 @@ class PokerEvaluatorTest {
 
     calcObj.resetUserHand();
     calcObj.resetCommunityCards();
+
 
     suit1 = Suit.CLUBS;
     rank1 = Rank.THREE;
@@ -311,6 +321,7 @@ class PokerEvaluatorTest {
     rank6 = Rank.FIVE;
     card6 = new Cards(rank6, suit6);
 
+
     calcObj.addUserCard(card1);
     calcObj.addUserCard(card2);
 
@@ -327,6 +338,7 @@ class PokerEvaluatorTest {
   public void testFourOfAKind() {
     calcObj.resetUserHand();
     calcObj.resetCommunityCards();
+
 
     suit1 = Suit.CLUBS;
     rank1 = Rank.FOUR;
@@ -354,6 +366,7 @@ class PokerEvaluatorTest {
     rank6 = Rank.THREE;
     card6 = new Cards(rank6, suit6);
 
+
     calcObj.addUserCard(card1);
     calcObj.addUserCard(card2);
 
@@ -370,6 +383,7 @@ class PokerEvaluatorTest {
   public void testHasRoyalFlush() {
     calcObj.resetUserHand();
     calcObj.resetCommunityCards();
+
 
     suit1 = Suit.CLUBS;
     rank1 = Rank.KING;
@@ -401,6 +415,7 @@ class PokerEvaluatorTest {
     rank7 = Rank.QUEEN;
     card7 = new Cards(rank7, suit7);
 
+
     calcObj.addUserCard(card1);
     calcObj.addUserCard(card2);
 
@@ -412,5 +427,4 @@ class PokerEvaluatorTest {
 
     assertTrue(calcEval.hasRoyalFlush(calcObj.getUserCards(), calcObj.getCommunityCards()));
   }
-
 }
