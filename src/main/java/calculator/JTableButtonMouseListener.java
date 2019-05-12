@@ -1,3 +1,9 @@
+/**
+ * Custom Listener to pass clicks on table cells through to the buttons inside.
+ *
+ * @author Yuko Takegoshi
+ */
+
 package calculator;
 
 import javax.swing.*;

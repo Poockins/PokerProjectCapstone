@@ -89,7 +89,6 @@ public class Game {
 
   public Cards getTurn() {
     return turn;
-
   }
 
   public void setTurn(Cards turn) {
@@ -142,7 +141,6 @@ public class Game {
   }
 
   public void removeHand(Hand hand) {
-
     setPlayers();
   }
 
@@ -167,6 +165,12 @@ public class Game {
     return this.players;
   }
 
+  /**
+   * Find a Game given its database id
+   *
+   * @param id game database id
+   * @return found Game
+   */
   public static Game findById(int id) {
     List<Map<String, Object>> results = new ArrayList<>();
     try {
@@ -183,6 +187,11 @@ public class Game {
     }
   }
 
+  /**
+   * Finds all Games in the database
+   *
+   * @return all found games
+   */
   public static ArrayList<Game> findAll() {
     ArrayList<Game> found = new ArrayList<>();
     List<Map<String, Object>> results = new ArrayList<>();
@@ -202,11 +211,18 @@ public class Game {
     return found;
   }
 
+  /**
+   * Saves the Game to the database
+   *
+   * @return success/failure status
+   * @throws SQLException
+   */
+
   public boolean save() throws SQLException {
-    int updated = 0;
+    int updated;
     DBConnection db = new DBConnection();
     String query = "UPDATE games SET flop=?, turn=?, river=? WHERE id=?";
-    String[] flopParam = Cards.toStringArray(flop);
+    String[] flopParam = Cards.toDataStringArray(flop);
     updated = db.updateQuery(query, flopParam, this.turn.toDataString(), this.river.toDataString(),
         this.id);
 
@@ -224,12 +240,10 @@ public class Game {
    * @throws SQLException
    */
   public boolean delete() throws SQLException {
-    int updated = 0;
+    int updated;
     DBConnection db = new DBConnection();
     String query = "DELETE FROM games WHERE id = ?";
     updated = db.updateQuery(query, this.id);
-
-//    Hand.deleteForGame(this);
 
     if (updated > 0) {
       return true;
@@ -239,6 +253,11 @@ public class Game {
   }
 
 
+  /**
+   * Aggregates data for all games into a table-friendly format
+   *
+   * @return table-friendly data containing general game details
+   */
   public static Object[][] aggregateData() {
     ArrayList<Game> allGames = findAll();
     ArrayList<Object[]> data = new ArrayList<>();
@@ -256,6 +275,12 @@ public class Game {
     return data.toArray(new Object[data.size()][7]);
   }
 
+  /**
+   * Aggregates details for a given Game into a table-friendly format
+   * Returns one row per player/hand in a game
+   *
+   * @return data of game details for inserting into a table
+   */
   public String[][] aggregateDetails() {
     Hand[] hands = getHandsFromDB();
     ArrayList<String[]> data = new ArrayList<>();

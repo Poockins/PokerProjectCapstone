@@ -33,7 +33,7 @@ public class Hand {
     try {
       DBConnection db = new DBConnection();
       String query = "INSERT INTO hands (cards, player_id) VALUES (?, ?)";
-      String[] cardParam = Cards.toStringArray(cards);
+      String[] cardParam = Cards.toDataStringArray(cards);
       List<Map<String, Object>> results = db.insertQuery(query, cardParam, player.getId());
       Map<String, Object> row = results.get(0);
       this.cards = cards;
@@ -169,7 +169,7 @@ public class Hand {
     try {
       DBConnection db = new DBConnection();
       updated = db.updateQuery("UPDATE hands SET player_id = ?, cards = ?, game_id=? WHERE id = ?",
-          player.getId(), Cards.toStringArray(this.cards), game.getId(), this.id);
+          player.getId(), Cards.toDataStringArray(this.cards), game.getId(), this.id);
       if (updated > 0) {
         status = true;
       }
@@ -180,6 +180,11 @@ public class Hand {
     return status;
   }
 
+  /**
+   * Calculates the win probability for the hand.
+   *
+   * @return win probability percentage
+   */
   public double calculateWin() {
     PokerCalculator cal = new PokerCalculator();
     for (Cards card : this.cards) {
@@ -189,6 +194,13 @@ public class Hand {
     return cal.probabilityCalculation();
   }
 
+  /**
+   * Overloads calculateWin()
+   * Calculates the win probability for the hand given a flop
+   *
+   * @param flop
+   * @return win probability percentage
+   */
   public double calculateWin(Cards[] flop) {
     PokerCalculator cal = new PokerCalculator();
     for (Cards card : this.cards) {
@@ -204,6 +216,14 @@ public class Hand {
     return cal.probabilityCalculation();
   }
 
+  /**
+   * Overloads calculateWin()
+   * Calculates the win probability for the hand given a flop and turn
+   *
+   * @param flop
+   * @param turn
+   * @return win probability percentage
+   */
   public double calculateWin(Cards[] flop, Cards turn) {
     PokerCalculator cal = new PokerCalculator();
     for (Cards card : this.cards) {
@@ -223,6 +243,15 @@ public class Hand {
     return cal.probabilityCalculation();
   }
 
+  /**
+   * Overloads calculateWin()
+   * Calculates the win probability for the hand given a flop, turn, and river
+   *
+   * @param flop
+   * @param turn
+   * @param river
+   * @return win probability percentage
+   */
   public double calculateWin(Cards[] flop, Cards turn, Cards river) {
     PokerCalculator cal = new PokerCalculator();
     for (Cards card : this.cards) {

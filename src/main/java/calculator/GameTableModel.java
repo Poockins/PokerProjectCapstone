@@ -1,3 +1,9 @@
+/**
+ * Custom table model for the general game history table
+ *
+ * @author Yuko Takegoshi
+ */
+
 package calculator;
 
 import javax.swing.*;

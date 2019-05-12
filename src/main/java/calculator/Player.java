@@ -116,7 +116,6 @@ public class Player {
     return status;
   }
 
-
   /**
    * Updates Player data in the database
    *

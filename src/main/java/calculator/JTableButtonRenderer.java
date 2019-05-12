@@ -1,3 +1,9 @@
+/**
+ * Custom TableCellRenderer to render buttons in JTable cells
+ *
+ * @author Yuko Takegoshi
+ */
+
 package calculator;
 
 import javax.swing.*;

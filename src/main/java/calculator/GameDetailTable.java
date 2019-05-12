@@ -1,3 +1,9 @@
+/**
+ * Creates a JPanel of the Game details data.
+ *
+ * @author Yuko Takegoshi
+ */
+
 package calculator;
 
 import javax.swing.*;

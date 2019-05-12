@@ -48,6 +48,12 @@ public class Cards implements Comparable<Cards> {
     return this.suit;
   }
 
+  /**
+   * Given an array of string representations of Cards, converts them to Cards
+   *
+   * @param data
+   * @return instantiated Cards from their string representations
+   */
   public static Cards[] stringToArray(String[] data) {
     List<Cards> converted = new ArrayList<>();
     for (String cardString : data) {
@@ -112,7 +118,13 @@ public class Cards implements Comparable<Cards> {
         .join(",", cardsList.stream().map(c -> "'" + c.toDataString() + "'").collect(Collectors.toList()));
   }
 
-  public static String[] toStringArray(Cards[] cards) {
+  /**
+   * Converts an array of cards to an array of card data strings
+   *
+   * @param cards
+   * @return
+   */
+  public static String[] toDataStringArray(Cards[] cards) {
     String[] result = new String[cards.length];
     for (int i = 0; i < cards.length; i++) {
       result[i] = cards[i].toDataString();
