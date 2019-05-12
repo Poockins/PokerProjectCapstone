@@ -21,7 +21,7 @@ public class PokerHistory extends JPanel {
     JTable gameTable = new JTable(new GameTableModel());
     JScrollPane scrollPane = new JScrollPane(gameTable);
     scrollPane.setPreferredSize(parentSize);
-    TableUtils.setTableColumnsWidth(gameTable, (int) parentSize.getWidth(), 5, 10, 25, 15, 15, 15, 15);
+    TableUtils.setTableColumnsWidth(gameTable, (int) parentSize.getWidth(), 7, 28, 15, 15, 15, 15);
     gameTable.setFillsViewportHeight(true);
 
     TableCellRenderer buttonRenderer = new JTableButtonRenderer();
