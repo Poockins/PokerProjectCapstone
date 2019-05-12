@@ -1,13 +1,14 @@
-package calculator;
-
-import java.util.ArrayList;
-
 /**
  * This class will produce the probability based off the users input which is his own hand and it
  * will also evaluate the users hand as well.
  *
  * @author Thomas
  */
+
+package calculator;
+
+import java.util.ArrayList;
+
 public class PokerCalculator {
 
   // The end users hand
@@ -32,6 +33,8 @@ public class PokerCalculator {
 
   /**
    * adds cards to the user arraylist
+   *
+   * @param card
    */
   public void addUserCard(Cards card) {
     // adding one of the two cards to the userhand list.
@@ -41,6 +44,8 @@ public class PokerCalculator {
 
   /**
    * adds community cards to the cards list
+   *
+   * @param card
    */
   public void addCommunityCard(Cards card) {
     communityCards.add(card);
@@ -96,6 +101,7 @@ public class PokerCalculator {
       // we convert the ratio to a percentage.
       probabilityPercent = (outs / (outs + lose)) * 100;
     } else if (pokerChartObj.hasTwoPair2House(userCards, communityCards)) {
+
 
       outs = 4;// only two cards can give you a double pair in the deck.
       // now lets get the unseen cards
@@ -156,6 +162,7 @@ public class PokerCalculator {
       probabilityPercent = (outs / (outs + lose)) * 100;
     } else if (pokerChartObj.hasTwoOverCard(userCards, communityCards)) {
 
+
       // The outs is two because only two cards can make this hand a straight. one in the front or
       // back
       outs = 6;// according to the poker charts
@@ -171,6 +178,7 @@ public class PokerCalculator {
       probabilityPercent = (outs / (outs + lose)) * 100;
     } else if (pokerChartObj.hasOverCard(userCards, communityCards)) {
 
+
       // The outs is two because only two cards can make this hand a straight. one in the front or
       // back
       outs = 3;// only three outs according to the poker charts
@@ -185,6 +193,7 @@ public class PokerCalculator {
       // we convert the ratio to a percentage.
       probabilityPercent = (outs / (outs + lose)) * 100;
     } else if (pokerChartObj.hasNoPairToPair(userCards, communityCards)) {
+
 
       // The outs is two because only two cards can make this hand a straight. one in the front or
       // back

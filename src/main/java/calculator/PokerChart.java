@@ -1,9 +1,3 @@
-package calculator;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.ListIterator;
-
 /**
  * This class will contain some poker odds in the form of boolean methods. The poker odds are the
  * most common that appear in the game of Texas Holdem This will determine the potential that the
@@ -11,8 +5,14 @@ import java.util.ListIterator;
  *
  * @author Thomas
  */
-public class PokerChart {
 
+package calculator;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.ListIterator;
+
+public class PokerChart {
   // poker evaluation object
   private PokerEvaluator evaluator;
 
@@ -41,6 +41,7 @@ public class PokerChart {
     allCards.addAll(communityCards);
     allCards.addAll(userCards);
 
+
     Collections.sort(allCards);
 
     ListIterator<Cards> iterator = allCards.listIterator();
@@ -55,9 +56,11 @@ public class PokerChart {
     while (iterator.hasNext())// begin
     {
 
+
       Cards nextCard = (Cards) iterator.next();
 
       differenceIndex = nextCard.getRank().getRankValue() - previousCard.getRank().getRankValue();
+
 
       if (differenceIndex == 1 || differenceIndex == 2)//
       {
@@ -70,6 +73,7 @@ public class PokerChart {
       previousCard = nextCard;
 
     } // end of while loop
+
 
     // now we will verify wether this is open ended ..
 
@@ -90,6 +94,7 @@ public class PokerChart {
 
       differenceIndex1 = nextCard.getRank().getRankValue() - previousCard.getRank().getRankValue();
 
+
       if (differenceIndex1 == 1)//
       {
         openEndedCards.add(nextCard);
@@ -98,10 +103,12 @@ public class PokerChart {
         openEndedCards.add(nextCard);
       }
 
+
       differenceIndex1 = 0;
       previousCard = nextCard;
 
     } // end of while loop
+
 
     if (openEndedCards.size() == 4) {
       // if the users cards is not part of the chronological card then we return false and true if
@@ -114,6 +121,7 @@ public class PokerChart {
 
 
     }
+
 
     return false;
   }
@@ -134,6 +142,7 @@ public class PokerChart {
     allCards.addAll(communityCards);
     allCards.addAll(userCards);
 
+
     Collections.sort(allCards);
 
     ListIterator<Cards> iterator = allCards.listIterator();
@@ -147,9 +156,11 @@ public class PokerChart {
     while (iterator.hasNext())// begin
     {
 
+
       Cards nextCard = (Cards) iterator.next();
 
       differenceIndex = nextCard.getRank().getRankValue() - previousCard.getRank().getRankValue();
+
 
       // System.out.println(differenceIndex);
       if (differenceIndex == 1)//
@@ -183,6 +194,7 @@ public class PokerChart {
 
       differenceIndex1 = nextCard.getRank().getRankValue() - previousCard.getRank().getRankValue();
 
+
       // if this list shows to be not open ended it will return a false.
       if (differenceIndex1 == 1)//
       {
@@ -195,10 +207,12 @@ public class PokerChart {
         return false;
       }
 
+
       differenceIndex1 = 0;
       previousCard = nextCard;
 
     } // end of while loop
+
 
     if (openEndedCards.size() == 4) {
       // if the users cards is not part of the chronological card then we return false and true if
@@ -267,8 +281,7 @@ public class PokerChart {
     highCard1 = userCards.get(0);
     highCard2 = userCards.get(1);
 
-    if (!(highCard1.getRank().getRankValue() >= 10) || !(highCard2.getRank().getRankValue()
-        >= 10)) {
+    if (!(highCard1.getRank().getRankValue() >= 10) || !(highCard2.getRank().getRankValue() >= 10)) {
       return false;// one of the cards is not a high car
     }
     // now we have the high card which is in the hand lets check if that hand is highest in the
@@ -283,8 +296,10 @@ public class PokerChart {
       }
     }
 
+
     return true;// we check all possible cards to see if there exists a high card in our hand that
     // is the highest.
+
 
   }
 

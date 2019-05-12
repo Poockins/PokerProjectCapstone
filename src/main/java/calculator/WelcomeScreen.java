@@ -20,7 +20,6 @@ public class WelcomeScreen extends JFrame {
   JPanel controlPanel = new JPanel();
   Container contentPane = this.getContentPane();
   JPanel pokerCalPanel = new PokerPanel(new JPanel());
-  JPanel historyPanel = new PokerHistory();
 
 
   public WelcomeScreen() {
@@ -95,6 +94,7 @@ public class WelcomeScreen extends JFrame {
     });
     databaseButton.addActionListener((ActionEvent e) -> {
       mainPanel.removeAll();
+      JPanel historyPanel = new PokerHistory();
       mainPanel.add(historyPanel);
       repaint();
       validate();

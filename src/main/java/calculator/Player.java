@@ -104,7 +104,7 @@ public class Player {
       DBConnection db = new DBConnection();
       List<Map<String, Object>> results = db.insertQuery("INSERT INTO players (name) VALUES (?)", name);
       Map<String, Object> row = results.get(0);
-      Integer id = (Integer)row.get("id");
+      Integer id = (Integer) row.get("id");
       if (id > 0) {
         status = true;
         this.id = id;

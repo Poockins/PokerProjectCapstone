@@ -1,7 +1,3 @@
-package calculator;
-
-import java.util.*;
-
 /**
  * This Class can evaluate a users hand efficiently to determine the hand that it currently has this
  * is mainly used to support the poker chart process. The poker chart determines what potential
@@ -9,6 +5,11 @@ import java.util.*;
  *
  * @author Thomas
  */
+
+package calculator;
+
+import java.util.*;
+
 public class PokerEvaluator {
 
   // Evaluator String
@@ -28,7 +29,7 @@ public class PokerEvaluator {
    * Checks to see if the user has a rank card which is anything above 10. A high card is ten, jack,
    * queen, king and ace
    *
-   * @param userCards      - The users hand
+   * @param userCards - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if user has high card
    */
@@ -46,7 +47,7 @@ public class PokerEvaluator {
   /**
    * Checks to see if the user, not the community cards, has a pair.
    *
-   * @param userCards      - The users hand
+   * @param userCards - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has a pair
    */
@@ -57,7 +58,7 @@ public class PokerEvaluator {
   /**
    * Checks to see if it has a straight, but with all the same suits. Known as a straight flush
    *
-   * @param userCards      - The users hand
+   * @param userCards - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has a straight flush
    */
@@ -68,7 +69,7 @@ public class PokerEvaluator {
   /**
    * Checks to see if the user has a full house.
    *
-   * @param userCards      - The users hand
+   * @param userCards - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has full house
    */
@@ -102,7 +103,7 @@ public class PokerEvaluator {
   /**
    * Checks to see if the user has two pairs.
    *
-   * @param userCards      - The users hand
+   * @param userCards - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has two pair hand.
    */
@@ -113,7 +114,7 @@ public class PokerEvaluator {
   /**
    * It checks to see if the user has a straight. Basically card or cards
    *
-   * @param userCards      - The users hand
+   * @param userCards - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has has a straight.
    */
@@ -124,6 +125,7 @@ public class PokerEvaluator {
 
     allCards.addAll(communityCards);
     allCards.addAll(userCards);
+
 
     Collections.sort(allCards);
 
@@ -136,6 +138,7 @@ public class PokerEvaluator {
 
     while (iterator.hasNext())// begin
     {
+
 
       Cards nextCard = (Cards) iterator.next();
 
@@ -151,11 +154,11 @@ public class PokerEvaluator {
 
     } // end of while loop
 
+
     if (chronOrderCards.size() >= 5) {
       // if the users cards is not part of the chronological card then we return false and true if
       // its in the list.
-      if (chronOrderCards.contains(userCards.get(0)) || chronOrderCards
-          .contains(userCards.get(1))) {
+      if (chronOrderCards.contains(userCards.get(0)) || chronOrderCards.contains(userCards.get(1))) {
         return true;
       } else {
         return false;
@@ -168,7 +171,7 @@ public class PokerEvaluator {
   /**
    * Checks to see if it has four of a kind in the Texas holden game.
    *
-   * @param userCards      - The users hand
+   * @param userCards - The users hand
    * @param communityCards - The community cards
    * @return T or F if the user has four of a kind.
    */
@@ -191,7 +194,7 @@ public class PokerEvaluator {
   /**
    * Checks to see if it has three of a kind.
    *
-   * @param userCards      - The users hand
+   * @param userCards - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has three of a kind.
    */
@@ -214,7 +217,7 @@ public class PokerEvaluator {
   /**
    * checks to see if there are five cards with the same suit
    *
-   * @param userCards      - The users hand
+   * @param userCards - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has a flush
    */
@@ -235,7 +238,7 @@ public class PokerEvaluator {
   /**
    * Checks to see if it has a royal flush
    *
-   * @param userCards      - The users hand
+   * @param userCards - The users hand
    * @param communityCards - The community cards
    * @return T or F - True if the user has a royal flush
    */
@@ -265,11 +268,10 @@ public class PokerEvaluator {
    * Populates a given Hashmap with royal ranks and found cards of that rank
    *
    * @param royalValues Hashmap of possibly existing ranks and found cards of that rank
-   * @param cards       Cards to check through
+   * @param cards Cards to check through
    * @return Populated Hashmap of card ranks and associated cards
    */
-  private HashMap<Integer, ArrayList<Cards>> findRoyals(
-      HashMap<Integer, ArrayList<Cards>> royalValues, ArrayList<Cards> cards) {
+  private HashMap<Integer, ArrayList<Cards>> findRoyals(HashMap<Integer, ArrayList<Cards>> royalValues, ArrayList<Cards> cards) {
     HashMap<Integer, ArrayList<Cards>> found = new HashMap<>();
     found.putAll(royalValues);
     for (Cards check : cards) {
@@ -295,7 +297,6 @@ public class PokerEvaluator {
 
   /**
    * Populates an array representing how many cards of a suit have been found
-   *
    * @param found previously found suit counts
    * @param cards Cards to check through
    * @return array representing how many cards of a suit have been found

@@ -8,9 +8,9 @@
 
 package calculator;
 
-import java.lang.reflect.Field;
-import java.sql.SQLException;
 import org.hsqldb.jdbc.JDBCArray;
+
+import java.sql.SQLException;
 import java.util.*;
 
 
@@ -220,7 +220,7 @@ public class Game {
     ArrayList<Game> allGames = findAll();
     ArrayList<String[]> data = new ArrayList<>();
 
-    for (Game game: allGames) {
+    for (Game game : allGames) {
       Cards[] flop = game.getFlop();
       String flopString = Cards.arrayToString(flop);
       String turn = game.getTurn().toString();

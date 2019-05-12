@@ -101,7 +101,7 @@ public class Cards implements Comparable<Cards> {
   public static String arrayToString(Cards[] cards) {
     List<Cards> cardsList = Arrays.asList(cards);
     return String
-        .join(",", cardsList.stream().map(c ->  "'" + c.toDataString() + "'").collect(Collectors.toList()));
+        .join(",", cardsList.stream().map(c -> "'" + c.toDataString() + "'").collect(Collectors.toList()));
   }
 
   public static String[] toStringArray(Cards[] cards) {
