@@ -181,7 +181,7 @@ public class PokerPanel extends JPanel {
       game.setTurn(turn);
       game.setRiver(river);
       game.save();
-      JOptionPane.showMessageDialog(JOptionPane.getRootFrame(),"Game saved");
+      JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Game saved");
     } catch (SQLException ex) {
       ex.printStackTrace();
     }
@@ -621,16 +621,17 @@ public class PokerPanel extends JPanel {
     if (communityStatus.get(1)) {
       Rank rank = (Rank) tableCardComponents.get(1).get("value").getSelectedItem();
       Suit suit = (Suit) tableCardComponents.get(1).get("suit").getSelectedItem();
-      return new Cards (rank, suit);
+      return new Cards(rank, suit);
     } else {
       return null;
     }
   }
+
   private Cards getRiver() {
     if (communityStatus.get(2)) {
       Rank rank = (Rank) tableCardComponents.get(2).get("value").getSelectedItem();
       Suit suit = (Suit) tableCardComponents.get(2).get("suit").getSelectedItem();
-      return new Cards (rank, suit);
+      return new Cards(rank, suit);
     } else {
       return null;
     }
