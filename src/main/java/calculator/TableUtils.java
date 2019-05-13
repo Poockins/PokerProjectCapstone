@@ -14,9 +14,9 @@ public final class TableUtils {
   /**
    * Set table column widths for a given table using percentages
    *
-   * @param table JTable to set column widths for
+   * @param table               JTable to set column widths for
    * @param tablePreferredWidth Total width of the table
-   * @param percentages Percentages of individual columns. Must add up to 100.
+   * @param percentages         Percentages of individual columns. Must add up to 100.
    */
   public static void setTableColumnsWidth(JTable table, int tablePreferredWidth,
                                           double... percentages) {

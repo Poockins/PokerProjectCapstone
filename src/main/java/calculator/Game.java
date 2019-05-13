@@ -66,10 +66,12 @@ public class Game {
     Cards river = Cards.stringToCard((String) params.get("RIVER"));
     JDBCArray flop = (JDBCArray) params.get("FLOP");
     try {
-      Object[] flopObjects = (Object[]) flop.getArray();
-      String[] flopStrings = Arrays.stream(flopObjects)
-          .toArray(String[]::new);
-      this.flop = Cards.stringToArray(flopStrings);
+      if (flop != null) {
+        Object[] flopObjects = (Object[]) flop.getArray();
+        String[] flopStrings = Arrays.stream(flopObjects)
+            .toArray(String[]::new);
+        this.flop = Cards.stringToArray(flopStrings);
+      }
       this.turn = turn;
       this.river = river;
       this.id = (Integer) params.get("ID");
@@ -222,9 +224,21 @@ public class Game {
     int updated;
     DBConnection db = new DBConnection();
     String query = "UPDATE games SET flop=?, turn=?, river=? WHERE id=?";
-    String[] flopParam = Cards.toDataStringArray(flop);
-    updated = db.updateQuery(query, flopParam, this.turn.toDataString(), this.river.toDataString(),
-        this.id);
+    String[] flopParam = new String[3];
+    if (this.flop != null) {
+      flopParam = Cards.toDataStringArray(flop);
+    }
+
+    String turnData = "";
+    if (this.turn != null) {
+      turnData = this.turn.toDataString();
+    }
+
+    String riverData = "";
+    if (this.river != null) {
+      riverData = this.river.toDataString();
+    }
+    updated = db.updateQuery(query, flopParam, turnData, riverData, this.id);
 
     if (updated > 0) {
       return true;
@@ -264,9 +278,19 @@ public class Game {
 
     for (Game game : allGames) {
       Cards[] flop = game.getFlop();
-      String flopString = Cards.arrayToString(flop);
-      String turn = game.getTurn().toString();
-      String river = game.getRiver().toString();
+      String flopString = "";
+      String turn = "";
+      String river = "";
+      if (flop != null && flop.length > 0) {
+        flopString = Cards.arrayToString(flop);
+      }
+      if (game.getTurn() != null) {
+        turn = game.getTurn().toString();
+      }
+
+      if (game.getRiver() != null) {
+        river = game.getRiver().toString();
+      }
       Date gameDate = game.getCreatedAt();
       Object[] row = {gameDate, flopString, turn, river};
       data.add(row);
