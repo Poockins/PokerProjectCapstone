@@ -8,6 +8,7 @@ package calculator;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -61,10 +62,18 @@ public class GameTableModel extends AbstractTableModel {
     }
   }
 
+
+  /**
+   * Handles actions on the view button for a game entry by showing game details.
+   *
+   * @param e
+   * @param rowIndex
+   */
   private void viewButtonHandler(ActionEvent e, final int rowIndex) {
     Game game = games.get(rowIndex);
 
-    JPanel gameInfo = new GameDetailTable(game);
+    Dimension size = new Dimension(1000, 600);
+    JPanel gameInfo = new GameDetailTable(game, size);
 
     JDialog dialog = new JDialog(JOptionPane.getRootFrame(), "Game details", true);
     dialog.setSize(1000, 600);
@@ -72,6 +81,12 @@ public class GameTableModel extends AbstractTableModel {
     dialog.setVisible(true);
   }
 
+  /**
+   * Handles actions on the delete button for a game entry.
+   *
+   * @param e
+   * @param rowIndex
+   */
   private void deleteButtonHandler(ActionEvent e, final int rowIndex) {
     Game game = games.get(rowIndex);
 

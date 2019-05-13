@@ -11,23 +11,33 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class GameDetailTable extends JPanel {
-  public GameDetailTable(Game game) {
-    JPanel detailsPanel = new JPanel(new GridBagLayout());
-    GridBagConstraints detailsConstraints = new GridBagConstraints();
+  public GameDetailTable(Game game, Dimension size) {
+    JPanel detailsPanel = new JPanel(new BorderLayout());
+    detailsPanel.setPreferredSize(size);
     JPanel header = new JPanel(new GridBagLayout());
+    header.setPreferredSize(new Dimension(size.width, 40));
     GridBagConstraints headerConstraints = new GridBagConstraints();
     headerConstraints.gridx = 0;
     headerConstraints.gridy = 0;
+    headerConstraints.anchor = GridBagConstraints.CENTER;
     int gridX = 0;
     String[] labels = {"Flop", "Turn", "River"};
     for (int i = 0; i < labels.length; i++) {
       headerConstraints.gridx = gridX;
       JLabel label = new JLabel(labels[i]);
+      if (i == 0) {
+        headerConstraints.gridwidth = 2;
+        headerConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridX++;
+      } else {
+        headerConstraints.gridwidth = 1;
+        headerConstraints.fill = GridBagConstraints.NONE;
+      }
       header.add(label, headerConstraints);
       gridX++;
     }
 
-    String flop = Cards.arrayToString(game.getFlop());
+    String flop = Cards.arrayToHumanString(game.getFlop());
     String turn = game.getTurn().toString();
     String river = game.getRiver().toString();
 
@@ -39,6 +49,14 @@ public class GameDetailTable extends JPanel {
     for (int i = 0; i < community.length; i++) {
       headerConstraints.gridx = gridX;
       JLabel label = new JLabel(community[i]);
+      if (i == 0) {
+        headerConstraints.gridwidth = 2;
+        headerConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridX++;
+      } else {
+        headerConstraints.gridwidth = 1;
+        headerConstraints.fill = GridBagConstraints.NONE;
+      }
       header.add(label, headerConstraints);
       gridX++;
     }
@@ -54,15 +72,17 @@ public class GameDetailTable extends JPanel {
     };
 
     JTable table = new JTable(tableModel);
+    int tableWidth = size.width;
+    int tableHeight = size.height;
+    table.setPreferredScrollableViewportSize(table.getPreferredSize());
+    table.setSize(tableWidth, tableHeight);
+    TableUtils.setTableColumnsWidth(table, tableWidth, 10, 50, 10, 10, 10, 10);
 
 
     JScrollPane scrollPane = new JScrollPane(table);
 
-    detailsConstraints.gridx = 0;
-    detailsConstraints.gridy = 0;
-    detailsPanel.add(header, detailsConstraints);
-    detailsConstraints.gridy = 1;
-    detailsPanel.add(scrollPane, detailsConstraints);
+    detailsPanel.add(header, BorderLayout.PAGE_START);
+    detailsPanel.add(scrollPane, BorderLayout.CENTER);
 
 
     add(detailsPanel);

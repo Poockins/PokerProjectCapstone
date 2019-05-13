@@ -11,6 +11,7 @@ package calculator;
 import org.hsqldb.jdbc.JDBCArray;
 
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.util.*;
 
 
@@ -282,7 +283,7 @@ public class Game {
       String turn = "";
       String river = "";
       if (flop != null && flop.length > 0) {
-        flopString = Cards.arrayToString(flop);
+        flopString = Cards.arrayToHumanString(flop);
       }
       if (game.getTurn() != null) {
         turn = game.getTurn().toString();
@@ -309,10 +310,12 @@ public class Game {
     Hand[] hands = getHandsFromDB();
     ArrayList<String[]> data = new ArrayList<>();
     for (Hand hand : hands) {
-      String preFlop = Double.toString(hand.calculateWin());
-      String flop = Double.toString(hand.calculateWin(this.flop));
-      String turn = Double.toString(hand.calculateWin(this.flop, this.turn));
-      String river = Double.toString(hand.calculateWin(this.flop, this.turn, this.river));
+      NumberFormat numberFormat = NumberFormat.getNumberInstance();
+      numberFormat.setMinimumFractionDigits(2);
+      String preFlop = numberFormat.format(hand.calculateWin()) + "%";
+      String flop = numberFormat.format(hand.calculateWin(this.flop)) + "%";
+      String turn = numberFormat.format(hand.calculateWin(this.flop, this.turn)) + "%";
+      String river = numberFormat.format(hand.calculateWin(this.flop, this.turn, this.river)) + "%";
       String[] row = {hand.getPlayer().getName(), hand.toString(), preFlop, flop, turn, river};
       data.add(row);
     }

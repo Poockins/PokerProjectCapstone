@@ -118,10 +118,16 @@ public class Cards implements Comparable<Cards> {
         .join(",", cardsList.stream().map(c -> "'" + c.toDataString() + "'").collect(Collectors.toList()));
   }
 
+  public static String arrayToHumanString(Cards[] cards) {
+    List<Cards> cardsList = Arrays.asList(cards);
+    return String
+        .join(",", cardsList.stream().map(c -> c.toString()).collect(Collectors.toList()));
+  }
+
   /**
    * Converts an array of cards to an array of card data strings
    *
-   * @param cards
+   * @param cards cards to convert
    * @return
    */
   public static String[] toDataStringArray(Cards[] cards) {

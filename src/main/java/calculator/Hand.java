@@ -277,7 +277,6 @@ public class Hand {
   }
 
   public String toString() {
-    String handString = player.getName() + " has a " + cards[0].toString() + " and " + cards[1].toString();
-    return handString;
+    return String.format("%s, %s", cards[0].toString(), cards[1].toString());
   }
 }

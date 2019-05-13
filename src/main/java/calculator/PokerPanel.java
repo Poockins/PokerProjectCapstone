@@ -1,5 +1,5 @@
 /**
- * PokerPanel is the main panel displaying the poker table with its players and hands
+ * PokerPanel displays the Calculator portion of the app, allowing users to input cards and calculate probabilities.
  *
  * @author elich
  * @author Yuko Takegoshi
@@ -14,30 +14,35 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PokerPanel extends JPanel {
 
-  HashMap<Integer, Player> players = new HashMap<>();
+  private HashMap<Integer, Player> players = new HashMap<>();
 
-  JPanel[] playerPanels = new JPanel[8];
-  JPanel[] playerCardPanels = new JPanel[8];
+  private JPanel[] playerPanels = new JPanel[8];
+  private JPanel[] playerCardPanels = new JPanel[8];
 
-  Rank[] cardValue = Rank.values();
-  Suit[] suitValue = Suit.values();
+  private Rank[] cardValue = Rank.values();
+  private Suit[] suitValue = Suit.values();
 
-  ArrayList<HashMap<String, JComboBox>> tableCardComponents = new ArrayList<>();
-  HashMap<Integer, ArrayList<JPanel>> playerCardComponents = new HashMap<>();
-  HashMap<Integer, Boolean> communityStatus = new HashMap<>();
-  JPanel pokerTable = new JPanel();
+  private ArrayList<HashMap<String, JComboBox>> tableCardComponents = new ArrayList<>();
+  private HashMap<Integer, ArrayList<JPanel>> playerCardComponents = new HashMap<>();
+
+  // Tracks whether a community panel is active
+  private HashMap<Integer, Boolean> communityStatus = new HashMap<>();
+
+  // Container for community panels/cards
+  private JPanel pokerTable = new JPanel();
 
   //Border used for various components
-  Border blackline = BorderFactory.createLineBorder(Color.black);
+  private Border blackline = BorderFactory.createLineBorder(Color.black);
 
-  JButton databaseButton = new JButton("Save game to history");
+  private JButton databaseButton = new JButton("Save game to history");
 
-  JTable calcTable = new JTable();
+  private JTable calcTable;
 
   public PokerPanel(JPanel contentPanel) {
     SpringLayout layout = new SpringLayout();
@@ -594,7 +599,9 @@ public class PokerPanel extends JPanel {
     Cards river = getRiver();
 
     for (Hand hand : hands) {
-      String probability = Double.toString(hand.calculateWin(flop, turn, river));
+      NumberFormat numberFormat = NumberFormat.getNumberInstance();
+      numberFormat.setMinimumFractionDigits(2);
+      String probability = numberFormat.format(hand.calculateWin(flop, turn, river)) + "%";
       String[] row = {hand.getPlayer().getName(), probability};
       data.add(row);
     }
@@ -602,6 +609,11 @@ public class PokerPanel extends JPanel {
     return data.toArray(new String[data.size()][2]);
   }
 
+  /**
+   * Gets the current flop if the panel is active
+   *
+   * @return flop Cards array
+   */
   private Cards[] getFlop() {
     Cards[] flop = new Cards[3];
     if (communityStatus.get(0)) {
@@ -617,6 +629,11 @@ public class PokerPanel extends JPanel {
     return flop;
   }
 
+  /**
+   * Gets the current turn card if the panel is active.
+   *
+   * @return turn card
+   */
   private Cards getTurn() {
     if (communityStatus.get(1)) {
       Rank rank = (Rank) tableCardComponents.get(1).get("value").getSelectedItem();
@@ -627,6 +644,11 @@ public class PokerPanel extends JPanel {
     }
   }
 
+  /**
+   * Gets the current river card if the panel is active.
+   *
+   * @return river card
+   */
   private Cards getRiver() {
     if (communityStatus.get(2)) {
       Rank rank = (Rank) tableCardComponents.get(2).get("value").getSelectedItem();

@@ -1,5 +1,5 @@
 /**
- * DBConnection is used for database functionality throughout the app
+ * DBConnection is used for database functionality throughout the app.
  *
  * @author Yuko Takegoshi
  * @version 1.0
@@ -7,14 +7,14 @@
 
 package calculator;
 
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.handlers.MapListHandler;
-import org.hsqldb.jdbc.JDBCDataSource;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.MapListHandler;
+import org.hsqldb.jdbc.JDBCDataSource;
 
 public class DBConnection {
 
@@ -47,7 +47,7 @@ public class DBConnection {
   }
 
   /**
-   * Initializes a database and table structure if they do not yet exist
+   * Initializes a database and table structure if they do not yet exist.
    *
    * @return Nothing
    */
@@ -58,7 +58,7 @@ public class DBConnection {
   }
 
   /**
-   * Empties all data in the database
+   * Empties all data in the database.
    *
    * @return Nothing
    */
@@ -66,6 +66,11 @@ public class DBConnection {
     runner.execute("TRUNCATE SCHEMA PUBLIC RESTART IDENTITY AND COMMIT NO CHECK");
   }
 
+  /**
+   * Completely empty the database, including table schema.
+   *
+   * @throws SQLException
+   */
   public void dropAllTables() throws SQLException {
     runner.execute("DROP SCHEMA PUBLIC CASCADE");
   }
