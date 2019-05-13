@@ -10,6 +10,7 @@ package calculator;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
@@ -28,10 +29,15 @@ public class PokerPanel extends JPanel {
 
   ArrayList<HashMap<String, JComboBox>> tableCardComponents = new ArrayList<>();
   HashMap<Integer, ArrayList<JPanel>> playerCardComponents = new HashMap<>();
+  HashMap<Integer, Boolean> communityStatus = new HashMap<>();
   JPanel pokerTable = new JPanel();
 
   //Border used for various components
   Border blackline = BorderFactory.createLineBorder(Color.black);
+
+  JButton databaseButton = new JButton("Save game to history");
+
+  JTable calcTable = new JTable();
 
   public PokerPanel(JPanel contentPanel) {
     SpringLayout layout = new SpringLayout();
@@ -44,36 +50,37 @@ public class PokerPanel extends JPanel {
     createPlayerPanels();
 
     //Calculation Panel
-    String odds = "", cardsNeeded = "";
-    String[][] dataRow = {{odds, cardsNeeded}, {"", ""}};
-    String[] columnNames = {"Odds", "Cards"};
-    JPanel calcPanel = new JPanel();
+    JPanel calcPanel = new JPanel(new BorderLayout());
+    calcPanel.setPreferredSize((new Dimension(pokerTable.getPreferredSize().width / 3,
+        pokerTable.getPreferredSize().height)));
+    JButton calculate = new JButton("Calculate");
+    calcPanel.add(calculate, BorderLayout.NORTH);
     calcPanel.setBorder(blackline);
-    JTable calcTable = new JTable(dataRow, columnNames);
+    String[] columnNames = {"Player", "Odds"};
+    String[][] initial = {{"", ""}};
+    calcTable = new JTable(initial, columnNames);
     int tableWidth = calcPanel.getWidth();
     int tableHeight = calcPanel.getHeight();
     calcTable.setPreferredScrollableViewportSize(calcTable.getPreferredSize());
     calcTable.setSize(tableWidth, tableHeight);
-    calcPanel.setBounds(0, 0, 50, 50);
-    JScrollPane sp = new JScrollPane(calcTable);
 
-    calcPanel.add(sp);
+    JScrollPane sp = new JScrollPane(calcTable);
+    calcPanel.add(sp, BorderLayout.CENTER);
+    calculate.addActionListener((ActionEvent e) -> {
+      String[][] data = calculateProbabilities();
+      String[] columns = {"Player", "Odds"};
+      DefaultTableModel newModel = new DefaultTableModel(data, columns);
+      calcTable.setModel(newModel);
+    });
+
 
     //Misc. Components
     JPanel miscPanel = new JPanel();
     miscPanel.setLayout(new BoxLayout(miscPanel, BoxLayout.Y_AXIS));
-    JButton databaseButton = new JButton("Save to Database");
+    databaseButton.setVisible(false);
     JButton clearButton = new JButton("Clear Form");
     clearButton.addActionListener((ActionEvent e) -> {
-      for (int i = 0; i < playerPanels.length; i++) {
-        CardLayout panelLayout = (CardLayout) playerPanels[i].getLayout();
-        panelLayout.show(playerPanels[i], "empty");
-        clearPlayerData(i);
-      }
-
-      clearTable();
-      repaint();
-      validate();
+      clearForm();
     });
 
     miscPanel.add(clearButton);
@@ -160,10 +167,6 @@ public class PokerPanel extends JPanel {
 
   /**
    * Saves the current game board to the database
-   *
-   * @param flop
-   * @param turn
-   * @param river
    */
   private void makeDiaryEntry(Cards[] flop, Cards turn, Cards river) {
     Hand[] hands = findHands();
@@ -178,6 +181,7 @@ public class PokerPanel extends JPanel {
       game.setTurn(turn);
       game.setRiver(river);
       game.save();
+      JOptionPane.showMessageDialog(JOptionPane.getRootFrame(),"Game saved");
     } catch (SQLException ex) {
       ex.printStackTrace();
     }
@@ -218,10 +222,14 @@ public class PokerPanel extends JPanel {
 
     playerCardComponents.put(index, cardPanels);
 
-    JButton removeButton = removeButton(index);
-    c.gridy = 2;
-    c.fill = GridBagConstraints.NONE;
-    playerCardPanel.add(removeButton, c);
+    // Player 1 is always active, don't show a remove button
+    if (index > 0) {
+      JButton removeButton = removeButton(index);
+      c.gridy = 2;
+      c.fill = GridBagConstraints.NONE;
+      playerCardPanel.add(removeButton, c);
+    }
+
     playerCardPanel.setName(String.format("%d_player_card_panel", index));
     playerCardPanels[index] = playerCardPanel;
     return playerCardPanel;
@@ -307,13 +315,102 @@ public class PokerPanel extends JPanel {
     tableConstraints.gridx = 0;
     tableConstraints.gridy = 0;
     tableConstraints.insets = new Insets(2, 1, 1, 1);
-    JLabel flopLabel = new JLabel("Flop");
-    pokerTable.add(flopLabel, tableConstraints);
-    tableConstraints.gridy = 1;
+    String[] panelLabels = {"Flop", "Turn", "River"};
+    JPanel[] panels = {new JPanel(new CardLayout()), new JPanel(new CardLayout()), new JPanel(new CardLayout())};
+    JPanel[] containers = {new JPanel(new GridBagLayout()), new JPanel(new GridBagLayout()), new JPanel(new GridBagLayout())};
 
-    // Create and add Poker Table components
-    int tableGridx = 1;
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < panels.length; i++) {
+      JPanel container = containers[i];
+      GridBagConstraints c = new GridBagConstraints();
+      c.gridx = 0;
+      c.gridy = 0;
+      JLabel label = new JLabel(panelLabels[i]);
+      container.add(label, c);
+      JPanel cardPanel = panels[i];
+      cardPanel.setName("community_card_panel");
+      String buttonLabel = String.format("Add %s", panelLabels[i]);
+      JPanel empty = emptyCommunityPanel(buttonLabel, i);
+      cardPanel.add(empty, "empty");
+      int numCards = i == 0 ? 3 : 1; // flop requires 3 cards
+      JPanel active = activeCommunityPanel(numCards, i);
+      cardPanel.add(active, "active");
+      c.gridy = 1;
+      container.add(cardPanel, c);
+      communityStatus.put(i, false);
+    }
+
+    tableConstraints.fill = GridBagConstraints.HORIZONTAL;
+    tableConstraints.gridwidth = 2;
+    pokerTable.add(containers[0], tableConstraints);
+    tableConstraints.gridy = 1;
+    tableConstraints.gridwidth = 1;
+    tableConstraints.fill = GridBagConstraints.NONE;
+    pokerTable.add(containers[1], tableConstraints);
+    tableConstraints.gridx = 1;
+    pokerTable.add(containers[2], tableConstraints);
+  }
+
+  /**
+   * Creates empty state for a community card panel
+   *
+   * @param label Button label
+   * @param index index of community panel
+   * @return
+   */
+  private JPanel emptyCommunityPanel(String label, int index) {
+    JPanel panel = new JPanel(new GridBagLayout());
+    GridBagConstraints c = new GridBagConstraints();
+    JButton button = new JButton(label);
+    button.setName(String.format("%d_add_community", index));
+    button.addActionListener((ActionEvent e) -> {
+      JButton source = (JButton) e.getSource();
+      JPanel parent = (JPanel) SwingUtilities.getAncestorNamed("community_card_panel", source);
+      CardLayout layout = (CardLayout) parent.getLayout();
+      layout.show(parent, "active");
+      String name = source.getName();
+
+      int sourceIndex = Integer.parseInt(name.split("_")[0]);
+
+      communityStatus.put(sourceIndex, true);
+
+
+      boolean canSave = false;
+      for (Boolean status : communityStatus.values()) {
+        if (status) {
+          canSave = true;
+        } else {
+          canSave = false;
+          break;
+        }
+      }
+
+      if (canSave) {
+        databaseButton.setVisible(true);
+      }
+    });
+
+    c.gridx = 1;
+    c.gridy = 1;
+
+    panel.add(button, c);
+
+    return panel;
+  }
+
+  /**
+   * Creates active state for a community panel
+   *
+   * @param numCards number of cards to generate for panel
+   * @param index    community panel index
+   * @return
+   */
+  private JPanel activeCommunityPanel(int numCards, int index) {
+    JPanel panel = new JPanel(new GridBagLayout());
+    GridBagConstraints c = new GridBagConstraints();
+    c.insets = new Insets(2, 1, 1, 1);
+    c.gridy = 0;
+    int tableGridx = 0;
+    for (int i = 0; i < numCards; i++) {
       JComboBox<Rank> value = new JComboBox<>(cardValue);
       JComboBox<Suit> suit = new JComboBox<>(suitValue);
 
@@ -323,35 +420,48 @@ public class PokerPanel extends JPanel {
       boxes.put("suit", suit);
 
       tableCardComponents.add(boxes);
-
-      if (i < 3) {
-        pokerTable.add(value, tableConstraints);
-        tableConstraints.gridx = tableGridx;
-        tableGridx++;
-        pokerTable.add(suit, tableConstraints);
-        tableConstraints.gridx = tableGridx;
-        tableGridx++;
-      }
+      c.gridx = tableGridx;
+      panel.add(value, c);
+      tableGridx++;
+      c.gridx = tableGridx;
+      panel.add(suit, c);
+      tableGridx++;
     }
 
-    //Start of the river
-    tableConstraints.gridy = 2;
-    tableConstraints.gridx = 0;
-    JLabel turnLabel = new JLabel("Turn");
-    pokerTable.add(turnLabel, tableConstraints);
-    tableConstraints.gridy = 3;
-    pokerTable.add(tableCardComponents.get(4).get("value"), tableConstraints);
-    tableConstraints.gridx = 1;
-    pokerTable.add(tableCardComponents.get(4).get("suit"), tableConstraints);
-    //Start of the turn
-    tableConstraints.gridy = 2;
-    tableConstraints.gridx = 2;
-    JLabel riverLabel = new JLabel("River");
-    pokerTable.add(riverLabel, tableConstraints);
-    tableConstraints.gridy = 3;
-    pokerTable.add(tableCardComponents.get(3).get("value"), tableConstraints);
-    tableConstraints.gridx = 3;
-    pokerTable.add(tableCardComponents.get(3).get("suit"), tableConstraints);
+    JButton reset = new JButton("Reset");
+    reset.setName(String.format("%d_reset_community", index));
+    reset.addActionListener((ActionEvent e) -> {
+      JButton source = (JButton) e.getSource();
+      JPanel parent = (JPanel) SwingUtilities.getAncestorNamed("community_card_panel", source);
+      CardLayout layout = (CardLayout) parent.getLayout();
+      layout.show(parent, "empty");
+      String name = source.getName();
+      int sourceIndex = Integer.parseInt(name.split("_")[0]);
+      if (sourceIndex == 0) {
+        for (int i = 0; i < 3; i++) {
+          HashMap<String, JComboBox> component = tableCardComponents.get(i);
+          for (JComboBox box : component.values()) {
+            box.setSelectedIndex(0);
+          }
+        }
+      } else {
+        HashMap<String, JComboBox> component = tableCardComponents.get(sourceIndex + 2);
+        for (JComboBox box : component.values()) {
+          box.setSelectedIndex(0);
+        }
+      }
+
+      communityStatus.put(sourceIndex, false);
+      databaseButton.setVisible(false);
+    });
+
+    c.gridy = 1;
+    c.gridx = 0;
+    c.gridwidth = tableGridx;
+    c.anchor = GridBagConstraints.PAGE_END;
+    panel.add(reset, c);
+
+    return panel;
   }
 
   /**
@@ -368,9 +478,17 @@ public class PokerPanel extends JPanel {
       playerPanel.setPreferredSize(new Dimension(pokerTable.getPreferredSize().width / 3,
           pokerTable.getPreferredSize().height));
       playerPanel.setName(String.format("%d_player_panel", i));
-      JPanel emptyPanel = emptyPanel(i);
+
+      // Player 1 is always active
+      if (i == 0) {
+        Player player = new Player("Player 1");
+        players.put(0, player);
+      } else {
+        JPanel emptyPanel = emptyPanel(i);
+        playerPanel.add(emptyPanel, "empty");
+      }
+
       JPanel cardPanel = playerCardPanel(i);
-      playerPanel.add(emptyPanel, "empty");
       playerPanel.add(cardPanel, "cards");
 
       playerPanels[i] = playerPanel;
@@ -380,21 +498,29 @@ public class PokerPanel extends JPanel {
   }
 
   /**
+   * Clears everything on the board, resets back to original state
+   */
+  private void clearForm() {
+    resetPlayerCards(0); // Player 1 is always active
+    for (int i = 1; i < playerPanels.length; i++) {
+      CardLayout panelLayout = (CardLayout) playerPanels[i].getLayout();
+      panelLayout.show(playerPanels[i], "empty");
+      clearPlayerData(i);
+    }
+
+    clearTable();
+    repaint();
+    validate();
+  }
+
+  /**
    * Clears a player from the board, resetting their cards and removing the Player object
    *
    * @param index Player index to clear
    */
   private void clearPlayerData(int index) {
     players.remove(index);
-
-    ArrayList<JPanel> cardPanels = playerCardComponents.get(index);
-    for (JPanel panel : cardPanels) {
-      Component[] components = panel.getComponents();
-      for (Component component : components) {
-        JComboBox box = (JComboBox) component;
-        box.setSelectedIndex(0);
-      }
-    }
+    resetPlayerCards(index);
   }
 
   /**
@@ -403,6 +529,22 @@ public class PokerPanel extends JPanel {
   private void clearTable() {
     for (HashMap<String, JComboBox> component : tableCardComponents) {
       for (JComboBox box : component.values()) {
+        box.setSelectedIndex(0);
+      }
+    }
+  }
+
+  /**
+   * Resets cards for a given player back to default.
+   *
+   * @param index player index to reset
+   */
+  private void resetPlayerCards(int index) {
+    ArrayList<JPanel> cardPanels = playerCardComponents.get(index);
+    for (JPanel panel : cardPanels) {
+      Component[] components = panel.getComponents();
+      for (Component component : components) {
+        JComboBox box = (JComboBox) component;
         box.setSelectedIndex(0);
       }
     }
@@ -437,5 +579,60 @@ public class PokerPanel extends JPanel {
       handIndex++;
     }
     return hands;
+  }
+
+  /**
+   * Creates a table friendly representation of the current odds
+   *
+   * @return data of players and their current odds
+   */
+  private String[][] calculateProbabilities() {
+    Hand[] hands = findHands();
+    ArrayList<String[]> data = new ArrayList<>();
+    Cards[] flop = getFlop();
+    Cards turn = getTurn();
+    Cards river = getRiver();
+
+    for (Hand hand : hands) {
+      String probability = Double.toString(hand.calculateWin(flop, turn, river));
+      String[] row = {hand.getPlayer().getName(), probability};
+      data.add(row);
+    }
+
+    return data.toArray(new String[data.size()][2]);
+  }
+
+  private Cards[] getFlop() {
+    Cards[] flop = new Cards[3];
+    if (communityStatus.get(0)) {
+      for (int i = 0; i < 3; i++) {
+        Rank rank = (Rank) tableCardComponents.get(i).get("value").getSelectedItem();
+        Suit suit = (Suit) tableCardComponents.get(i).get("suit").getSelectedItem();
+        flop[i] = new Cards(rank, suit);
+      }
+    } else {
+      return null;
+    }
+
+    return flop;
+  }
+
+  private Cards getTurn() {
+    if (communityStatus.get(1)) {
+      Rank rank = (Rank) tableCardComponents.get(1).get("value").getSelectedItem();
+      Suit suit = (Suit) tableCardComponents.get(1).get("suit").getSelectedItem();
+      return new Cards (rank, suit);
+    } else {
+      return null;
+    }
+  }
+  private Cards getRiver() {
+    if (communityStatus.get(2)) {
+      Rank rank = (Rank) tableCardComponents.get(2).get("value").getSelectedItem();
+      Suit suit = (Suit) tableCardComponents.get(2).get("suit").getSelectedItem();
+      return new Cards (rank, suit);
+    } else {
+      return null;
+    }
   }
 }

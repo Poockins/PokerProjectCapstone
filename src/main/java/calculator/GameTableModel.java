@@ -62,23 +62,21 @@ public class GameTableModel extends AbstractTableModel {
   }
 
   private void viewButtonHandler(ActionEvent e, final int rowIndex) {
-    JButton source = (JButton) e.getSource();
     Game game = games.get(rowIndex);
 
     JPanel gameInfo = new GameDetailTable(game);
 
-    JDialog dialog = new JDialog(JOptionPane.getFrameForComponent(source), "Game details", true);
-    dialog.setSize(1000, 300);
+    JDialog dialog = new JDialog(JOptionPane.getRootFrame(), "Game details", true);
+    dialog.setSize(1000, 600);
     dialog.add(gameInfo);
     dialog.setVisible(true);
   }
 
   private void deleteButtonHandler(ActionEvent e, final int rowIndex) {
     Game game = games.get(rowIndex);
-    JButton source = (JButton) e.getSource();
 
     int n = JOptionPane.showConfirmDialog(
-        JOptionPane.getFrameForComponent(source),
+        JOptionPane.getRootFrame(),
         "Are you sure you want to delete this game?",
         "Are you sure?",
         JOptionPane.YES_NO_OPTION);

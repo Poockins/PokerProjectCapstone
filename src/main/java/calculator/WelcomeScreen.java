@@ -26,7 +26,7 @@ public class WelcomeScreen extends JFrame {
     setTitle("Poker Calculator");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setLocationRelativeTo(null);
-    setSize(1300, 450);
+    setSize(1300, 600);
     setVisible(true);
     SpringLayout layout = new SpringLayout();
     setLayout(layout);
